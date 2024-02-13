@@ -59,7 +59,7 @@ void wifiSetup(String ssid, String password){
 
   while (status != WL_CONNECTED) {
     Serial.print(status);
-    delay(1000);
+    delay(5000);
 
   }
 
