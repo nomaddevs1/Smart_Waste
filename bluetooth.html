@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Bluetooth BLE Device Communication</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
     <script src="https://unpkg.com/p5ble@0.0.7/dist/p5.ble.js"></script>
 </head>
-<body>
-    <button id="connectButton">Connect to Bluetooth Device</button>
 
+<body>
+    <input type="text" placeholder="Put in Your SSID" id="SSID">
+    <input type="password" placeholder="Put in Your Password" id="Password">
+    <button id="Submit">Button</button>
     <script>
-        src="https://unpkg.com/p5ble@0.0.7/dist/p5.ble.js"
-        type="text/javascript"
+        let ssid, password
+        document.getElementById("Submit").addEventListener("click", function () {
+            ssid = document.getElementById("SSID").value;
+            password = document.getElementById("Password").value;
+
+            if (password == "" || ssid == "") {
+                alert("Please enter your password and ssid");
+                return
+            }
+            setup()
+        });
 
         const serviceUuid = "19b10000-e8f2-537e-4f6c-d104768a1214";
 
@@ -22,14 +34,8 @@
         function setup() {
             // Create a p5ble class
             myBLE = new p5ble();
+            connectToBle();
 
-            createCanvas(200, 200);
-            textSize(20);
-            textAlign(CENTER, CENTER);
-
-            // Create a 'Connect' button
-            const connectButton = createButton("Connect");
-            connectButton.mousePressed(connectToBle);
         }
 
         function connectToBle() {
@@ -37,8 +43,9 @@
             myBLE.connect(serviceUuid, writeValue);
         }
 
-        function writeValue(error, characteristic){
-            myBLE.write(characteristic[0],"Nomaddevs;nomadsage")
+        function writeValue(error, characteristic) {
+            if (error) console.log("error: ", error);
+            myBLE.write(characteristic[0], `${ssid};${password}`)
         }
 
         // A function that will be called once got characteristics
@@ -62,9 +69,10 @@
         function draw() {
             background(250);
             text(myValue, 100, 100);
-}
+        }
     </script>
 
 
 </body>
+
 </html>
