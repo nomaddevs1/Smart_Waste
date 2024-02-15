@@ -1,12 +1,20 @@
 #include <ArduinoBLE.h>
 #include <SPI.h>
 #include <WiFiS3.h>
-
+#include <ArduinoHttpClient.h>
 // Define the UUIDs for the BLE service and characteristic
 BLEService wifiService("19b10000-e8f2-537e-4f6c-d104768a1214");
 BLECharacteristic wifiCharacteristic("19b10001-e8f2-537e-4f6c-d104768a1214", BLERead | BLEWrite | BLENotify, 512); // Adjust size as needed
 
 int status = WL_IDLE_STATUS;
+
+// char serverAddress[] = "http://10.125.139.48:3000";    // name address for Google (using DNS)
+char serverAddress[] = "10.125.139.48";
+int port = 3001;
+
+WiFiClient client;
+HttpClient client1 = HttpClient(client, serverAddress, port);
+String response;
 
 void setup() {
   Serial.begin(9600);
@@ -65,8 +73,20 @@ void wifiSetup(String ssid, String password){
 
   Serial.println("");
   Serial.println("WiFi connected.");
+  if(WiFi.status() == WL_CONNECTED){
+    sendHttpRequest();
+  }
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+}
+
+void sendHttpRequest() {
+  Serial.print("hTTP");
+  client1.get("/");
+
+  response = client1.responseBody();
+  Serial.print("Response: ");
+  Serial.println(response);
 }
 
 void wifiCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
