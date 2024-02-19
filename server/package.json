@@ -7,7 +7,7 @@
     "start": "nodemon src/index.ts",
     "build": "tsc",
     "ts.check": "tsc --project tsconfig.json",
-    "render-build": "node ./build/src/index.js"
+    "render-build": "node ./build/index.js"
   },
   "pre-commit": [
     "ts.check",
