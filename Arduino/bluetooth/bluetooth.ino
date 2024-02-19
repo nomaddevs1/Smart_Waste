@@ -9,12 +9,15 @@ BLECharacteristic wifiCharacteristic("19b10001-e8f2-537e-4f6c-d104768a1214", BLE
 int status = WL_IDLE_STATUS;
 
 // char serverAddress[] = "http://10.125.139.48:3000";    // name address for Google (using DNS)
-char serverAddress[] = "10.125.139.48";
-int port = 3001;
 
-WiFiClient client;
-HttpClient client1 = HttpClient(client, serverAddress, port);
+WiFiSSLClient client;
+//HttpClient client1 = HttpClient(client, server, port);
 String response;
+
+int HTTP_PORT = 443;
+String HTTP_METHOD = "GET";
+char HOST_NAME[] = "smartwaste.onrender.com";
+String PATH_NAME = "/api";
 
 void setup() {
   Serial.begin(9600);
@@ -75,18 +78,46 @@ void wifiSetup(String ssid, String password){
   Serial.println("WiFi connected.");
   if(WiFi.status() == WL_CONNECTED){
     sendHttpRequest();
+
   }
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }
 
 void sendHttpRequest() {
-  Serial.print("hTTP");
-  client1.get("/");
+  if (client.connect(HOST_NAME, HTTP_PORT)) {
+    // if connected:
+    Serial.println("Connected to server");
+    // make a HTTP request:
+    // send HTTP header
+    client.println(HTTP_METHOD + " " + PATH_NAME + " HTTP/1.1");
+    client.println("Host: " + String(HOST_NAME));
+    client.println("Connection: close");
+    client.println();  // end HTTP header
 
-  response = client1.responseBody();
-  Serial.print("Response: ");
-  Serial.println(response);
+    while (client.connected()) {
+      if (client.available()) {
+        // read an incoming byte from the server and print it to serial monitor:
+        char c = client.read();
+        Serial.print(c);
+      }
+    }
+
+    // the server's disconnected, stop the client:
+    client.stop();
+    Serial.println();
+    Serial.println("disconnected");
+  } else {  // if not connected:
+    Serial.println("connection failed");
+  }
+}
+
+void readHttpResponse() {
+  while(client.available()){
+    String line = client.readStringUntil('\r');
+    Serial.println(line);
+    
+  }
 }
 
 void wifiCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
