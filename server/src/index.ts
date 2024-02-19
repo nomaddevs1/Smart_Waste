@@ -14,6 +14,12 @@ app.get('/api', (req: Request, res: Response) => {
     res.send("Welcome to the world of Arduino with Node.js installed")
 })
 
+
+app.post('/api', (req: Request, res: Response) => { 
+    console.log(req);
+    res.send("Thanks for the patience of Arduino")
+})
+
 app.listen(port, () => { 
     console.log(`[server]: Server is running at ${port}`)
 })
