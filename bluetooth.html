@@ -6,12 +6,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
     <script src="https://unpkg.com/p5ble@0.0.7/dist/p5.ble.js"></script>
+    <link rel="stylesheet" href="bluetooth-style.css">
 </head>
 
 <body>
-    <input type="text" placeholder="Put in Your SSID" id="SSID">
-    <input type="password" placeholder="Put in Your Password" id="Password">
-    <button id="Submit">Button</button>
+    <div class="wifi-form">
+        <div class="info-container">
+            <h1>WiFi Setup</h1>
+            <p>Enter in your WiFi SSID and Password and then pair with the Arduino board in order to connect it to your WiFi and our server.</p>
+        </div>
+        <input type="text" placeholder="Enter your WiFi SSID" id="SSID">
+        <input type="password" placeholder="Enter your WiFi password" id="Password">
+        <button id="Submit">Submit</button>
+    </div>
     <script>
         let ssid, password
         document.getElementById("Submit").addEventListener("click", function () {
@@ -64,11 +71,6 @@
             myValue = value;
             // After getting a value, call p5ble.read() again to get the value again
             myBLE.read(myCharacteristic, gotValue);
-        }
-
-        function draw() {
-            background(250);
-            text(myValue, 100, 100);
         }
     </script>
 
