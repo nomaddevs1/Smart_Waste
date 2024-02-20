@@ -15,9 +15,10 @@ WiFiSSLClient client;
 String response;
 
 int HTTP_PORT = 443;
-String HTTP_METHOD = "GET";
+String HTTP_METHOD = "POST";
 char HOST_NAME[] = "smartwaste.onrender.com";
 String PATH_NAME = "/api";
+String jsonData = "{\"lat\":\"value\"}";
 
 void setup() {
   Serial.begin(9600);
@@ -92,8 +93,12 @@ void sendHttpRequest() {
     // send HTTP header
     client.println(HTTP_METHOD + " " + PATH_NAME + " HTTP/1.1");
     client.println("Host: " + String(HOST_NAME));
+    client.println("Content-Type: application/json"); // Indicate we're sending JSON
+    client.println("Content-Length: " + String(jsonData.length())); // Length of the JSON data
     client.println("Connection: close");
     client.println();  // end HTTP header
+
+    client.println(jsonData); // Send the actual JSON data
 
     while (client.connected()) {
       if (client.available()) {
