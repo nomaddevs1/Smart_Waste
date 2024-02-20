@@ -1,75 +1,91 @@
-/*
- * Created by ArduinoGetStarted.com
- *
- * This example code is in the public domain
- *
- * Tutorial page: https://arduinogetstarted.com/tutorials/arduino-gps
- */
-
-#include <TinyGPS++.h>
 #include <SoftwareSerial.h>
+//SoftwareSerial SoftSerial(Tx, Rx);
+SoftwareSerial SoftSerial(2, 3);
+String currentSentence = "";
+bool eventOccurred = true;
+bool gnggaCaptured = false;
 
-#define RX_PIN 4  // Arduino Pin connected to the TX of the GPS module
-#define TX_PIN 3  // Arduino Pin connected to the RX of the GPS module
-
-TinyGPSPlus gps; // the TinyGPS++ object
-SoftwareSerial gpsSerial(RX_PIN, TX_PIN); // the serial interface to the GPS module
-
-void setup() {
-  Serial.begin(9600);
-  gpsSerial.begin(9600);  // Default baud of NEO-6M GPS module is 9600
-
-  Serial.println(F("Arduino - GPS module"));
+int count=0;                                // counter for buffer array
+void setup()
+{
+    SoftSerial.begin(9600);                 // the SoftSerial baud rate
+    Serial.begin(9600);                     // the Serial port of Arduino baud rate.
 }
 
-void loop() {
-  if (gpsSerial.available() > 0) {
-    if (gps.encode(gpsSerial.read())) {
-      if (gps.location.isValid()) {
-        Serial.print(F("- latitude: "));
-        Serial.println(gps.location.lat());
+void loop()
+{
+    // If the event has occurred, wait for the next $GNGGA sentence
+    if (eventOccurred && !gnggaCaptured) {
+        if (SoftSerial.available()) {
+            char c = SoftSerial.read();
+            currentSentence += c;
 
-        Serial.print(F("- longitude: "));
-        Serial.println(gps.location.lng());
+            if (c == '\n') { // End of sentence
+                if (currentSentence.startsWith("$GNGGA")) {
+                    Serial.println("Sending $GNGGA to backend:");
+                    Serial.println(currentSentence);
+                    // Add your code to send the currentSentence to the backend here
+                    float latitude, longitude;
+                    parseGNGGA(currentSentence, latitude, longitude);
 
-        Serial.print(F("- altitude: "));
-        if (gps.altitude.isValid())
-          Serial.println(gps.altitude.meters());
-        else
-          Serial.println(F("INVALID"));
-      } else {
-        Serial.println(F("- location: INVALID"));
-      }
-
-      Serial.print(F("- speed: "));
-      if (gps.speed.isValid()) {
-        Serial.print(gps.speed.kmph());
-        Serial.println(F(" km/h"));
-      } else {
-        Serial.println(F("INVALID"));
-      }
-
-      Serial.print(F("- GPS date&time: "));
-      if (gps.date.isValid() && gps.time.isValid()) {
-        Serial.print(gps.date.year());
-        Serial.print(F("-"));
-        Serial.print(gps.date.month());
-        Serial.print(F("-"));
-        Serial.print(gps.date.day());
-        Serial.print(F(" "));
-        Serial.print(gps.time.hour());
-        Serial.print(F(":"));
-        Serial.print(gps.time.minute());
-        Serial.print(F(":"));
-        Serial.println(gps.time.second());
-      } else {
-        Serial.println(F("INVALID"));
-      }
-
-      Serial.println();
+                    Serial.print("Latitude: ");
+                    Serial.println(latitude, 6);
+                    Serial.print("Longitude: ");
+                    Serial.println(longitude, 6);
+                    gnggaCaptured = true; // Prevent further $GNGGA captures
+                    // Optionally reset eventOccurred if you want to capture another $GNGGA on the next event
+                    // eventOccurred = false;
+                }
+                currentSentence = ""; // Reset for the next sentence
+            }
+        }
     }
-  }
+}
 
-  if (millis() > 5000 && gps.charsProcessed() < 10)
-    Serial.println(F("No GPS data received: check wiring"));
+
+
+
+void parseGNGGA(const String& sentence, float &latitude, float &longitude) {
+    int commaIndex = 0;
+    String latStr, lonStr;
+    char latDir, lonDir;
+
+    for (int i = 0, field = 0; i < sentence.length() && field <= 5; i++) {
+        if (sentence.charAt(i) == ',') {
+            commaIndex = i + 1; // Move past the comma for the start of the next field
+            field++;
+
+            // Latitude value
+            if (field == 2) {
+                latStr = sentence.substring(commaIndex, sentence.indexOf(',', commaIndex));
+            }
+            // Latitude direction (N/S)
+            else if (field == 3) {
+                latDir = sentence.charAt(commaIndex);
+            }
+            // Longitude value
+            else if (field == 4) {
+                lonStr = sentence.substring(commaIndex, sentence.indexOf(',', commaIndex));
+            }
+            // Longitude direction (E/W)
+            else if (field == 5) {
+                lonDir = sentence.charAt(commaIndex);
+            }
+        }
+    }
+
+    // Convert to decimal degrees
+    latitude = convertToDecimalDegrees(latStr) * (latDir == 'N' ? 1.0 : -1.0);
+    longitude = convertToDecimalDegrees(lonStr) * (lonDir == 'E' ? 1.0 : -1.0);
+}
+
+float convertToDecimalDegrees(const String& field) {
+    int decimalPointIndex = field.indexOf('.');
+    // Degrees are all characters before decimal point minus 2 (for minutes)
+    int degreePart = field.substring(0, decimalPointIndex - 2).toInt();
+    // Minutes are the last two digits before the decimal point plus the fractional part
+    float minutePart = field.substring(decimalPointIndex - 2).toFloat();
+
+    // Convert to decimal degrees
+    return degreePart + (minutePart / 60.0);
 }
