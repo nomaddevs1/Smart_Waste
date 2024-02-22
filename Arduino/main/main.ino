@@ -1,6 +1,6 @@
+#include "WiFiCommunication.h"
 #include "BLESetup.h"
 #include "GPSHandler.h"
-#include "WiFiCommunication.h"
 
 void setup() {
     Serial.begin(9600);

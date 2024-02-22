@@ -79,7 +79,6 @@ void wifiSetup(String ssid, String password){
   Serial.println("WiFi connected.");
   if(WiFi.status() == WL_CONNECTED){
     sendHttpRequest();
-
   }
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
