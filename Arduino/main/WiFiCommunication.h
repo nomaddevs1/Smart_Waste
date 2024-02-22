@@ -11,29 +11,7 @@ const int HTTP_PORT = 443;
 const String PATH_NAME = "/api";
 const String HTTP_METHOD = "POST";
 
-
-
-void wifiSetup(String ssid, String password){
-  status = WiFi.begin(ssid.c_str(), password.c_str());
-
-  if (status == WL_NO_MODULE) {
-    Serial.print("Error connecting...");
-  }
-
-  while (status != WL_CONNECTED) {
-    Serial.print(status);
-    delay(5000);
-
-  }
-
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  if(WiFi.status() == WL_CONNECTED){
-    sendHttpRequest();
-  }
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-}
+int status = WL_IDLE_STATUS;
 
 void sendHttpRequest(const String &jsonData)
 {
@@ -73,6 +51,25 @@ void sendHttpRequest(const String &jsonData)
     {
         Serial.println("Connection failed");
     }
+}
+
+void wifiSetup(String ssid, String password){
+  status = WiFi.begin(ssid.c_str(), password.c_str());
+
+  if (status == WL_NO_MODULE) {
+    Serial.print("Error connecting...");
+  }
+
+  while (status != WL_CONNECTED) {
+    Serial.print(status);
+    delay(5000);
+
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected.");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 #endif

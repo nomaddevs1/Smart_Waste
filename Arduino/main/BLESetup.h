@@ -12,36 +12,13 @@ BLEService wifiService(SERVICE_UUID);
 BLECharacteristic wifiCharacteristic(CHARACTERISTIC_UUID, BLERead | BLEWrite | BLENotify, 512);
 
 void wifiSetup(String ssid, String password);
+void blePeripheralConnectHandler(BLEDevice central);
+void blePeripheralDisconnectHandler(BLEDevice central);
 
-void initializeBLE() {
-    if (!BLE.begin()) {
-        Serial.println("Starting Bluetooth® Low Energy module failed!");
-        while (1);
-    }
-
-    BLE.setLocalName("WiFiConfig");
-    BLE.setAdvertisedService(wifiService);
-    wifiService.addCharacteristic(wifiCharacteristic);
-    BLE.addService(wifiService);
-
-    BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
-    BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
-
-    wifiCharacteristic.setEventHandler(BLEWritten, wifiCharacteristicWritten);
-    wifiCharacteristic.writeValue("Ready"); // Initial value
-    BLE.advertise();
-    Serial.println("BLE WiFi Setup Ready");
-}
 
 void blePeripheralConnectHandler(BLEDevice central) {
   Serial.print("Connected to central: ");
   Serial.println(central.address());
-}
-
-void blePeripheralDisconnectHandler(BLEDevice central) {
-  Serial.print("Disconnected from central: ");
-  Serial.println(central.address());
-  initializeBLE(); // Re-initialize to allow reconnection
 }
 
 void wifiCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
@@ -74,5 +51,31 @@ void wifiCharacteristicWritten(BLEDevice central, BLECharacteristic characterist
     Serial.println("Invalid format received.");
     characteristic.writeValue("Invalid Format"); // Inform sender of the error
   }
+}
+
+void initializeBLE() {
+    if (!BLE.begin()) {
+        Serial.println("Starting Bluetooth® Low Energy module failed!");
+        while (1);
+    }
+
+    BLE.setLocalName("WiFiConfig");
+    BLE.setAdvertisedService(wifiService);
+    wifiService.addCharacteristic(wifiCharacteristic);
+    BLE.addService(wifiService);
+
+    BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+    BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+
+    wifiCharacteristic.setEventHandler(BLEWritten, wifiCharacteristicWritten);
+    wifiCharacteristic.writeValue("Ready"); // Initial value
+    BLE.advertise();
+    Serial.println("BLE WiFi Setup Ready");
+}
+
+void blePeripheralDisconnectHandler(BLEDevice central) {
+  Serial.print("Disconnected from central: ");
+  Serial.println(central.address());
+  initializeBLE(); // Re-initialize to allow reconnection
 }
 #endif
