@@ -16,7 +16,7 @@ app.get('/api', (req: Request, res: Response) => {
 
 
 app.post('/api', (req: Request, res: Response) => { 
-    console.log(req);
+    console.log(req.body);
     res.send("Thanks for the patience of Arduino")
 })
 
