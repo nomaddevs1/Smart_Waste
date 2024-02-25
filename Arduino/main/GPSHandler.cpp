@@ -1,6 +1,6 @@
 #include "GPSHandler.h"
 
-SoftwareSerial SoftSerial(2, 3); // RX, TX pins - Definition
+SoftwareSerial SoftSerial(2, 3); // TX(Yellow) = 2, RX(White) = 3 
 String currentSentence = "";      // Definition
 bool gnggaCaptured = false;       // Definition
 
@@ -11,10 +11,9 @@ void setupGPS() {
 
 
 void readGPS(float &latitude, float &longitude) {
-    if (!gnggaCaptured && SoftSerial.available()) {
+    while (!gnggaCaptured && SoftSerial.available()) { //Loops until 
         char c = SoftSerial.read();
         currentSentence += c;
-
         if (c == '\n') {
             if (currentSentence.startsWith("$GNGGA")) {
                 parseGNGGA(currentSentence, latitude, longitude);

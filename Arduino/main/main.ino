@@ -8,6 +8,7 @@ float latitude, longitude;
 float distance;
 const int trigPin = 9;
 const int echoPin = 10;
+bool sentHTTP;
 
 void setup()
 {
@@ -16,27 +17,28 @@ void setup()
     setupGPS();
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
+    sentHTTP = false;
 }
 
 void loop()
 {
-    if (!gnggaCaptured)
-    {
-        readGPS(latitude, longitude);
-        if (gnggaCaptured)
-        {
-            jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + "}";
-        }
-    }
+  distanceCalc(trigPin, echoPin, distance);
 
-    if (WiFi.status() == WL_CONNECTED && gnggaCaptured)
-    {
-        sendHttpRequest(jsonData);
-        delay(5000); // Remove after adding the distance sensor logic
-    }
+  if (!gnggaCaptured){
+    readGPS(latitude, longitude);
+    if (gnggaCaptured)
+      {
+          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + "}";
+      }
+  }
+  
 
-    distanceCalc(trigPin, echoPin, distance);
-    Serial.print("Distance: ");
-    Serial.println(distance);
-    BLE.poll();
+  if (WiFi.status() == WL_CONNECTED && gnggaCaptured && distance < 10.0 && !sentHTTP)
+  {
+      sendHttpRequest(jsonData);
+      Serial.println("JSONDATA: " + jsonData);
+      sentHTTP = true;
+  }
+
+  BLE.poll();
 }

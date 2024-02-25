@@ -10,6 +10,8 @@ void setup()
 {
     SoftSerial.begin(9600);                 // the SoftSerial baud rate
     Serial.begin(9600);                     // the Serial port of Arduino baud rate.
+
+    Serial.print("Starting GPS");
 }
 
 void loop()
@@ -18,8 +20,6 @@ void loop()
     if (eventOccurred && !gnggaCaptured) {
         if (SoftSerial.available()) {
             char c = SoftSerial.read();
-            currentSentence += c;
-
             if (c == '\n') { // End of sentence
                 if (currentSentence.startsWith("$GNGGA")) {
                     Serial.println("Sending $GNGGA to backend:");

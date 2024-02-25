@@ -2,11 +2,7 @@
 #define Sensor_h
 
 
-
-const int trigPin = 9;
-const int echoPin = 10;
-
-float duration, distance;
+float duration;
 
 
 
@@ -22,3 +18,5 @@ int echoPin, float& distance) {
   distance = (duration*.0343)/2;
   delay(100);
 }
+
+#endif
