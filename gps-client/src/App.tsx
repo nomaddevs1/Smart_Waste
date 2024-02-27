@@ -8,10 +8,22 @@ import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "./context/UserAuthContext";
 import NotFound from "./pages/404";
 
+import Map from "./components/map";
+import { Wrapper, Status } from "@googlemaps/react-wrapper";
 
 function App() {
   const {  isAuthenticated } = useAuth()!;
   
+  const center = { lat: 33.2101, lng: -97.1490 };
+  const zoom = 15;
+
+  const render = (status: Status): any => {
+    if (status === Status.SUCCESS) return;
+    return null;
+  };
+
+  const apiKey = `${process.env.REACT_APP_GOOGLE_API_KEY}`;
+
   return (
     <Flex height="100vh" flexDirection="column" overflowY={'hidden'} >
       <Header/>
