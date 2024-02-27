@@ -24,6 +24,14 @@ void loop()
 {
   distanceCalc(trigPin, echoPin, distance);
 
+  if (distance > 10.0){
+    Serial.println("Distance not reached");
+    sentHTTP = false;
+    BLE.poll();
+    delay(2000);
+    return;
+  }
+
   if (!gnggaCaptured){
     readGPS(latitude, longitude);
     if (gnggaCaptured)
@@ -35,9 +43,14 @@ void loop()
 
   if (WiFi.status() == WL_CONNECTED && gnggaCaptured && distance < 10.0 && !sentHTTP)
   {
-      sendHttpRequest(jsonData);
-      Serial.println("JSONDATA: " + jsonData);
-      sentHTTP = true;
+      Serial.println("Distance threshold triggered, waiting 5 seconds.");
+      delay(5000);
+      distanceCalc(trigPin, echoPin, distance);
+      if(distance < 10.0){
+        sendHttpRequest(jsonData);
+        Serial.println("JSONDATA: " + jsonData);
+        sentHTTP = true;
+      }
   }
 
   BLE.poll();

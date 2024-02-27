@@ -3,7 +3,6 @@
 #define WiFiCommunication_h
 
 #include <WiFiS3.h>
-#include <ArduinoHttpClient.h>
 
 WiFiSSLClient client;
 const char HOST_NAME[] = "smartwaste.onrender.com";
