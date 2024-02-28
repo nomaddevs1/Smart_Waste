@@ -13,7 +13,8 @@
     <div class="wifi-form">
         <div class="info-container">
             <h1>WiFi Setup</h1>
-            <p>Enter in your WiFi SSID and Password and then pair with the Arduino board in order to connect it to your WiFi and our server.</p>
+            <p>Enter in your WiFi SSID and Password and then pair with the Arduino board in order to connect it to your
+                WiFi and our server.</p>
         </div>
         <input type="text" placeholder="Enter your WiFi SSID" id="SSID">
         <input type="password" placeholder="Enter your WiFi password" id="Password">
@@ -52,7 +53,8 @@
 
         function writeValue(error, characteristic) {
             if (error) console.log("error: ", error);
-            myBLE.write(characteristic[0], `${ssid};${password}`)
+            //write the uuid to the characteristics for the board to save or send back
+            myBLE.write(characteristic[0], `${ssid};${password};`)
         }
 
         // A function that will be called once got characteristics
@@ -61,7 +63,7 @@
             console.log("characteristics: ", characteristics);
             myCharacteristic = characteristics[0];
             // Read the value of the first characteristic
-            myBLE.read(myCharacteristic, gotValue);
+            myBLE.read(myCharacteristic, gotValue, 'string');
         }
 
         // A function that will be called once got values
