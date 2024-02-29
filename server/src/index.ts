@@ -10,7 +10,6 @@ const port = process.env.PORT || 3001;
 app.use(express.json())
 
 app.get('/api', (req: Request, res: Response) => {
-    console.log('YAY!')
     res.send("Welcome to the world of Arduino with Node.js installed")
 })
 

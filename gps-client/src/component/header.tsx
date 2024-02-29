@@ -1,5 +1,5 @@
 import { Text, Flex, Stack, Box, Button } from "@chakra-ui/react";
-import { auth } from "./auth/firebase";
+import data from "../auth/firebase";
 import { useNavigate } from "react-router-dom";
 
 function Logo(props: any) {
@@ -23,7 +23,7 @@ const MenuItem = ({ children, ...rest }: { children: any }) => {
 function Header() {
   const navigate = useNavigate();
   const handleSignOut = async () => {
-    await auth.signOut();
+    await data.auth.signOut();
     navigate('/login');
   }
   return (

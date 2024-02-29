@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { User, getAuth, onAuthStateChanged } from "firebase/auth";
 
 export const useFirstTimeLoginCheck = () => {
   const [isFirstLogin, setIsFirstLogin] = useState<boolean | null>(null);
@@ -9,19 +8,24 @@ export const useFirstTimeLoginCheck = () => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
       if (user) {
-        const creationTime = new Date(Number(user.metadata.creationTime)).getTime();
-        const lastSignInTime = new Date(Number(user.metadata.lastSignInTime)).getTime();
+        const creationTime = new Date(user.metadata.creationTime!).getTime();
+        const lastSignInTime = new Date(user.metadata.lastSignInTime!).getTime();
         // Consider it a first login if the account was created within the last 5 minutes
         const threshold = 5 * 60 * 1000; // 5 minutes in milliseconds
-        const isFirstLogin = lastSignInTime - creationTime < threshold;
-        setIsFirstLogin(isFirstLogin);
+        const isFirstLoginCheck = lastSignInTime - creationTime < threshold;
+        setIsFirstLogin(isFirstLoginCheck);
       } else {
         setIsFirstLogin(false);
       }
     });
 
-    return unsubscribe;
+    // Cleanup on unmount
+    return () => unsubscribe();
   }, []);
+
+  // Use another useEffect to log the state when it changes
+  useEffect(() => {
+  }, [isFirstLogin]);
 
   return isFirstLogin;
 };

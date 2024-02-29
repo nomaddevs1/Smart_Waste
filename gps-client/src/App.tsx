@@ -1,8 +1,9 @@
 import { Flex } from "@chakra-ui/react";
-import Header from "./header";
 import { Route, Routes} from 'react-router-dom';
 import LoginPane from "./pages/Login";
 import Role from "./pages/Role";
+import Header from "./component/header";
+import Dashboard from "./pages/Dashboard";
 
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/login"  element={<LoginPane/>} />
         <Route path="/roles"  element={<Role/>} />
+        <Route path="/dashboard"  element={<Dashboard/>} />
         {/* Add more routes as needed */}
       </Routes>
    

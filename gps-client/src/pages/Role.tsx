@@ -11,27 +11,19 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom"; // For navigation after selecting a role and username
-import { useAuth } from "../context/UserAuthContext";
+import useCreateUserRole from "../hooks/useCreateUser";
 
 const RoleSelectionPage = () => {
   const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
-  const navigate = useNavigate();
-  const { user } = useAuth()!;
-  
+  const { handleSubmit } = useCreateUserRole();
+
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setRole(event.target.value);
   };
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    console.log("Selected role:", role, "Username:", username);
-    // Here, handle the role and username submission (e.g., saving it to a database or updating application state)
-    navigate("/dashboard"); // Navigate to another page after selecting a role and entering a username, adjust the path as needed
   };
 
   return (
@@ -77,7 +69,11 @@ const RoleSelectionPage = () => {
                 onChange={handleUsernameChange}
               />
             </FormControl>
-            <Button colorScheme="blue" width="full" onClick={handleSubmit}>
+            <Button
+              colorScheme="blue"
+              width="full"
+              onClick={() => handleSubmit(role, username)}
+            >
               Submit
             </Button>
           </VStack>

@@ -14,10 +14,10 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 
-import { FaUserAlt, FaLock, FaGoogle } from "react-icons/fa";
+import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/UserAuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
-import { auth } from "../auth/firebase";
+import  data from "../auth/firebase";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { useFirstTimeLoginCheck } from "../hooks/useFirstTimeLoginCheck";
 
@@ -31,10 +31,12 @@ const LoginPane = () => {
   const isFirstTime = useFirstTimeLoginCheck()
   const navigate = useNavigate();
   const location = useLocation();
-  const {search} = location;
-  const routes = isFirstTime ? "/roles" : "/"
+  const { search } = location;
+  const { auth } = data
+  const routes = isFirstTime ? "/roles" : "/dashboard"
     useEffect(()=>{
-    if(user){ 
+      if (user) { 
+  
       navigate(routes);
     }
     else{
@@ -50,17 +52,13 @@ const LoginPane = () => {
         signInWithEmailLink(auth, localStorage.getItem('email'), window.location.href)
         .then((result)=>{
           // we can get the user from result.user but no need in this case
-          console.log(result.user);
           localStorage.removeItem('email');
-          console.log('Authentication successful, user:', result.user);
           navigate('/login');
         }).catch((err: {message: string})=>{
           navigate('/login');
         })
       }
-      else{
-        console.log('enter email and sign in');
-      }
+      
     }
   },[user, search, navigate]);
 
@@ -68,7 +66,6 @@ const LoginPane = () => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    console.log(window.location.href);
     sign(email, window.location.href);
   };
 

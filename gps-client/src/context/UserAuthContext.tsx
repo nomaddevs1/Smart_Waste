@@ -1,15 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../auth/firebase";
+import data from "../auth/firebase";
 import {
   UserCredential,
   User,
   sendSignInLinkToEmail,
-  signInWithEmailLink,
   GoogleAuthProvider,
   signInWithPopup,
-  onAuthStateChanged,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -28,9 +25,8 @@ export const AuthContext = createContext<UserContextState | null>(null);
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const navigate = useNavigate();
 
-  const auth1 = auth;
+  const auth1 = data.auth;
   useEffect(() => {
     const unsubscribe = auth1.onAuthStateChanged(
       (firebaseUser: User | null) => {
