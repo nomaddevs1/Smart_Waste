@@ -4,6 +4,9 @@
 
 #include <WiFiS3.h>
 
+extern BLECharacteristic wifiCharacteristic;
+extern void initializeBLE();
+
 WiFiSSLClient client;
 const char HOST_NAME[] = "smartwaste.onrender.com";
 const int HTTP_PORT = 443;
@@ -56,19 +59,36 @@ void wifiSetup(String ssid, String password){
   status = WiFi.begin(ssid.c_str(), password.c_str());
 
   if (status == WL_NO_MODULE) {
-    Serial.print("Error connecting...");
+    Serial.println("WiFi module not present");
+    // Send a BLE notification indicating the failure
+    wifiCharacteristic.writeValue("WiFi module not present");
+    return;
   }
 
+  // Attempt to connect to the WiFi network
+  unsigned long startTime = millis();
   while (status != WL_CONNECTED) {
-    Serial.print(status);
-    delay(5000);
+    delay(500); // Short delay to allow for WiFi connection attempts
+    status = WiFi.status(); // Update WiFi connection status
 
+    // Check for timeout (e.g., 30 seconds)
+    if (millis() - startTime > 30000) {
+      Serial.println("Failed to connect to WiFi");
+      // Send a BLE notification to the central device to inform about the WiFi connection failure
+      wifiCharacteristic.writeValue("Failed to connect; please re-enter credentials");
+
+      // Re-initialize BLE to allow reconnection and credential re-entry
+      // initializeBLE();
+      return;
+    }
   }
 
-  Serial.println("");
+  // Successfully connected to WiFi
   Serial.println("WiFi connected.");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-}
 
+  // Optionally, send a BLE notification about successful WiFi connection
+  wifiCharacteristic.writeValue("WiFi connected successfully");
+}
 #endif

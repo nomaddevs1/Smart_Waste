@@ -2,24 +2,23 @@
 #ifndef BLESetup_h
 #define BLESetup_h
 
-#include <ArduinoBLE.h>
 
-// UUIDs for the BLE service and characteristic
-#define SERVICE_UUID "19b10000-e8f2-537e-4f6c-d104768a1214"
-#define CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
+// // UUIDs for the BLE service and characteristic
+// #define SERVICE_UUID "19b10000-e8f2-537e-4f6c-d104768a1214"
+// #define CHARACTERISTIC_UUID "19b10001-e8f2-537e-4f6c-d104768a1214"
 
-BLEService wifiService(SERVICE_UUID);
-BLECharacteristic wifiCharacteristic(CHARACTERISTIC_UUID, BLERead | BLEWrite | BLENotify, 512);
+// BLEService wifiService(SERVICE_UUID);
+// BLECharacteristic wifiCharacteristic(CHARACTERISTIC_UUID, BLERead | BLEWrite | BLENotify, 512);
 
 void wifiSetup(String ssid, String password);
-void blePeripheralConnectHandler(BLEDevice central);
-void blePeripheralDisconnectHandler(BLEDevice central);
+// void blePeripheralConnectHandler(BLEDevice central);
+// void blePeripheralDisconnectHandler(BLEDevice central);
 
 
-void blePeripheralConnectHandler(BLEDevice central) {
-  Serial.print("Connected to central: ");
-  Serial.println(central.address());
-}
+// void blePeripheralConnectHandler(BLEDevice central) {
+//   Serial.print("Connected to central: ");
+//   Serial.println(central.address());
+// }
 
 void wifiCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic) {
   int length = characteristic.valueLength();
@@ -53,29 +52,10 @@ void wifiCharacteristicWritten(BLEDevice central, BLECharacteristic characterist
   }
 }
 
-void initializeBLE() {
-    if (!BLE.begin()) {
-        Serial.println("Starting Bluetooth® Low Energy module failed!");
-        while (1);
-    }
 
-    BLE.setLocalName("WiFiConfig");
-    BLE.setAdvertisedService(wifiService);
-    wifiService.addCharacteristic(wifiCharacteristic);
-    BLE.addService(wifiService);
-
-    BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
-    BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
-
-    wifiCharacteristic.setEventHandler(BLEWritten, wifiCharacteristicWritten);
-    wifiCharacteristic.writeValue("Ready"); // Initial value
-    BLE.advertise();
-    Serial.println("BLE WiFi Setup Ready");
-}
-
-void blePeripheralDisconnectHandler(BLEDevice central) {
-  Serial.print("Disconnected from central: ");
-  Serial.println(central.address());
-  initializeBLE(); // Re-initialize to allow reconnection
-}
+// void blePeripheralDisconnectHandler(BLEDevice central) {
+//   Serial.print("Disconnected from central: ");
+//   Serial.println(central.address());
+//   initializeBLE(); // Re-initialize to allow reconnection
+// }
 #endif
