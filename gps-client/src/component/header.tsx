@@ -33,6 +33,7 @@ function Header() {
       height="80px"
       alignItems="center"
       pos="fixed"
+      zIndex={"1000"}
       padding={{ base: "0 1rem", md: "0 6rem" }} // Adjusted padding for responsiveness
       boxShadow="0px 1px 2px  2px rgba(0, 0, 0, 0.13)"
       justifyContent="space-between" // This spreads the children across the container
@@ -49,7 +50,6 @@ function Header() {
         pt={[4, 4, 0, 0]}
         flex={1} // Makes the Stack take up available space, pushing the logo and items to opposite ends
       >
-        <MenuItem>Home</MenuItem>
         <MenuItem><Button  colorScheme='red' size='xs' onClick={handleSignOut}>SignOut</Button> </MenuItem>
         {/* You can add more MenuItems here */}
       </Stack>

@@ -58,7 +58,6 @@ const RoleSelectionPage = () => {
                 <option value="organization">Organization</option>
                 <option value="client">Client</option>
                 <option value="collaborators">Collector</option>
-                {/* Add more roles as needed */}
               </Select>
             </FormControl>
             <FormControl id="username-input">
@@ -70,7 +69,7 @@ const RoleSelectionPage = () => {
               />
             </FormControl>
             <Button
-              colorScheme="blue"
+              colorScheme="teal"
               width="full"
               onClick={() => handleSubmit(role, username)}
             >

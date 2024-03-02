@@ -58,7 +58,16 @@ const FirestoreService = {
     }
     return boardRef.id;
   },
-
+  getOrg: async (userId: string, serialNumber: string) => { 
+    //@ts-ignore
+    const role = await this.getUserRole(userId);
+    console.log(role)
+    if (role === "organization") {
+      const userDocRef = doc(db, 'users', userId);
+      const docSnap = await getDoc(userDocRef);
+      console.log(docSnap)
+    }
+  },
   assignBoardToClient: async (boardId: string, clientId: string): Promise<void> => {
     const boardDocRef = doc(db, 'boards', boardId);
     await updateDoc(boardDocRef, {

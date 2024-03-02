@@ -1,25 +1,72 @@
-import { Button, Flex } from "@chakra-ui/react";
-import { useState } from "react";
+import React, { useState } from "react";
+import {
+  Button,
+  Flex,
+  Box,
+  IconButton,
+  useDisclosure,
+  Wrap,
+  WrapItem,
+} from "@chakra-ui/react";
+import { WifiMedium } from "@phosphor-icons/react";
 import WifiSetupModal from "../component/WifiSetupModal";
 
-const Dashboard = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+// Assuming you have a list of boards, here's a mocked example
+const boards = [
+  { id: 1, name: "Board 1" },
+  { id: 2, name: "Board 2" },
+  // Add more boards as needed
+];
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+const Dashboard = () => {
+  const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const openModal = () => {
+    onOpen();
+  };
+
   return (
     <Flex
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundColor="gray.200"
-      justifyContent="center"
-      alignItems="center"
+      // backgroundColor="gray.200"
+      position="relative" // For the absolute positioning of the Add button
     >
-      <Button onClick={openModal} colorScheme="blue">
-        Setup WiFi
-      </Button>
-      <WifiSetupModal isOpen={isModalOpen} onClose={closeModal} />
+      <Wrap spacing="30px" justify="center">
+        {boards.map((board) => (
+          <WrapItem key={board.id}>
+            <Box
+              p="10"
+              borderWidth="1px"
+              borderRadius="lg"
+              boxShadow="lg"
+              bg="white"
+              alignItems={"center"}
+            >
+              {board.name}
+            </Box>
+          </WrapItem>
+        ))}
+      </Wrap>
+      <WifiSetupModal
+        isOpen={isOpen}
+        onClose={onClose}
+        boardId={selectedBoard!}
+      />
+
+      {/* Floating "Add" Button in the far right corner */}
+      <IconButton
+        icon={<WifiMedium size={32} color="#366fba" />}
+        colorScheme="teal"
+        borderRadius="full"
+        position="absolute"
+        bottom="4"
+        right="4"
+        aria-label="Add Button"
+        onClick={() => openModal()}
+      />
     </Flex>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -15,57 +15,30 @@ import {
   VStack,
   Divider,
   IconButton,
-} from '@chakra-ui/react';
-import { CloseIcon } from '@chakra-ui/icons'; 
+} from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
+import { useBLEConnection } from "../hooks/useBLEConnection";
 interface WifiSetupModalProps {
   isOpen: boolean;
   onClose: () => void;
+  boardId: string;
 }
 
-const WifiSetupModal: React.FC<WifiSetupModalProps> = ({ isOpen, onClose }) => {
-  const [ssid, setSsid] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
+  isOpen,
+  onClose,
+  boardId,
+}) => {
+  const [ssid, setSsid] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const toast = useToast();
-
-    let myBLE: any;
-  
-  const serviceUuid = "19b10000-e8f2-537e-4f6c-d104768a1214";
+  const { connectToBLEDevice, disconnectBLE } = useBLEConnection(toast);
 
   const modalBackground = useColorModeValue("white", "gray.700");
   const inputBorderColor = useColorModeValue("gray.300", "gray.600");
   const buttonHoverBg = useColorModeValue("blue.600", "blue.300");
 
-
-  const connectToBle = () => {
-    myBLE = new p5ble();
-
-    const onConnected = (error: string, characteristic: string) => {
-      if (error) {
-        console.log("error: ", error);
-        toast({
-          title: "Connection Error",
-          description: "There was an error connecting to the device.",
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-        return;
-      }
-      myBLE.write(characteristic[0], `${ssid};${password};`, ()=> {
-        toast({
-          title: "Success",
-          description: "Connected and data sent.",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-      });
-    };
-
-    myBLE.connect(serviceUuid, onConnected);
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!ssid || !password) {
       toast({
         title: "Error",
@@ -76,16 +49,22 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({ isOpen, onClose }) => {
       return;
     }
 
-    connectToBle();
+    await connectToBLEDevice(ssid, password);
+    onClose();
   };
   return (
-<Modal isOpen={isOpen} onClose={onClose} isCentered motionPreset="slideInBottom">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      motionPreset="slideInBottom"
+    >
       <ModalOverlay />
       <ModalContent backgroundColor={modalBackground}>
         <ModalHeader fontSize="lg" fontWeight="bold">
           WiFi Setup
         </ModalHeader>
-         <IconButton
+        <IconButton
           aria-label="Close modal"
           icon={<CloseIcon />} // Alternatively, use React Icons: icon={<IoClose />}
           position="absolute"
@@ -95,7 +74,7 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({ isOpen, onClose }) => {
           onClick={onClose}
           variant="ghost"
         />
-         <Divider orientation="horizontal" />
+        <Divider orientation="horizontal" />
         <ModalBody pb={6}>
           <VStack spacing={4}>
             <FormControl id="wifi-ssid">
@@ -106,7 +85,10 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setSsid(e.target.value)}
                 borderColor={inputBorderColor}
                 _hover={{ borderColor: "blue.500" }}
-                _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
+                _focus={{
+                  borderColor: "blue.500",
+                  boxShadow: "0 0 0 1px blue.500",
+                }}
               />
             </FormControl>
             <FormControl id="wifi-password">
@@ -118,22 +100,27 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 borderColor={inputBorderColor}
                 _hover={{ borderColor: "blue.500" }}
-                _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
+                _focus={{
+                  borderColor: "blue.500",
+                  boxShadow: "0 0 0 1px blue.500",
+                }}
               />
             </FormControl>
           </VStack>
         </ModalBody>
-         <Divider orientation="horizontal" />
+        <Divider orientation="horizontal" />
         <ModalFooter>
           <Button
-            colorScheme="blue"
+            colorScheme="teal"
             mr={3}
             onClick={handleSubmit}
             _hover={{ bg: buttonHoverBg }}
           >
             Submit
           </Button>
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

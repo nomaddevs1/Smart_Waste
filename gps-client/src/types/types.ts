@@ -16,7 +16,7 @@ export interface User {
 }
 
 export interface Board {
-  serialNumber: string;
+  UUID: string;
   orgId?: string;
   address: string;
   status: 'empty' | 'full';
