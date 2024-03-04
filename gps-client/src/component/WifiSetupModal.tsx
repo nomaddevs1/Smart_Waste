@@ -18,6 +18,9 @@ import {
 } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useBLEConnection } from "../hooks/useBLEConnection";
+import FirestoreService from "../db/db";
+import { useAuth } from "../context/UserAuthContext";
+
 interface WifiSetupModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -27,17 +30,16 @@ interface WifiSetupModalProps {
 const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
   isOpen,
   onClose,
-  boardId,
 }) => {
   const [ssid, setSsid] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const toast = useToast();
-  const { connectToBLEDevice, disconnectBLE } = useBLEConnection(toast);
-
+  const { connectToBLEDevice } = useBLEConnection(toast);
+  const { user } = useAuth()!;
   const modalBackground = useColorModeValue("white", "gray.700");
   const inputBorderColor = useColorModeValue("gray.300", "gray.600");
   const buttonHoverBg = useColorModeValue("blue.600", "blue.300");
-
+  console.log(user)
   const handleSubmit = async () => {
     if (!ssid || !password) {
       toast({
@@ -48,9 +50,20 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
       });
       return;
     }
-
-    await connectToBLEDevice(ssid, password);
     onClose();
+
+    const serialNumber = await connectToBLEDevice(ssid, password);
+    const boardExits = await FirestoreService.getBoard(serialNumber!);
+
+    if (!boardExits) {
+      await FirestoreService.addBoard(serialNumber!, user?.uid!);
+      toast({
+        title: "New Board detected",
+        description: "Board added",
+        status: "success",
+        isClosable: true,
+      });
+    }
   };
   return (
     <Modal

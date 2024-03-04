@@ -12,7 +12,6 @@ const useCreateUserRole = () => {
       console.error("No authenticated user found");
       return;
     }
-    console.log(user.uid, username, user.email!)
     try {
       switch (role) {
         case 'organization':

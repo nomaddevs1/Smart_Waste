@@ -7,14 +7,13 @@ import {
   setDoc, 
   updateDoc, 
   arrayUnion,
+  DocumentData,
 } from 'firebase/firestore'; 
-import  data  from '../auth/firebase'; // Ensure db is initialized using Firebase v9
-
-
-const {db} = data
+import  data  from '../auth/firebase'; 
+const { db } = data
 
 const FirestoreService = {
-    addOrganization: async (userId: string, name: string, email: string): Promise<string | undefined>  => {
+  addOrganization: async (userId: string, name: string, email: string): Promise<string | undefined>  => {
         try {
             const orgRef = await addDoc(collection(db, 'organizations'), {
                 name,
@@ -27,7 +26,6 @@ const FirestoreService = {
                 organizationID: orgRef.id,
                 role: 'organization'
             }, { merge: true });
-            console.log(orgRef)
             return orgRef.id;
         } catch (e) {
             console.log(e)
@@ -42,32 +40,46 @@ const FirestoreService = {
     }, { merge: true });
   },
 
-  addBoard: async (serialNumber: string, orgId: string, address: string, status: 'empty' | 'full' = 'empty'): Promise<string> => {
+  getUser: async (userId: string): Promise<DocumentData | null> =>{
+    const user = await getDoc(doc(db, 'users', userId));
+    if (user.exists()) {
+      return user.data();
+    } else {
+      console.log("No such user!");
+      return null;
+    }
+  },
+
+  addBoard: async (serialNumber: string, orgId: string, status: 'empty' | 'full' = 'empty'): Promise<string> => {
     const boardRef = await addDoc(collection(db, 'boards'), {
       serialNumber,
       orgId,
-      address,
+      lat: "",
+      lng: "",
       status,
       location: null,
     });
-    if (orgId) {
-      const orgDocRef = doc(db, 'organizations', orgId);
-      await updateDoc(orgDocRef, {
-        boards: arrayUnion(boardRef.id)
-      });
-    }
+  
     return boardRef.id;
   },
+
+  getBoard: async (serialNumber: string): Promise<Boolean> => {
+    const boardDoc = await getDoc(doc(db, 'boards', serialNumber));
+    if (boardDoc.exists()) { 
+      return true
+    }
+    return false
+  },
+
   getOrg: async (userId: string, serialNumber: string) => { 
     //@ts-ignore
     const role = await this.getUserRole(userId);
-    console.log(role)
     if (role === "organization") {
       const userDocRef = doc(db, 'users', userId);
       const docSnap = await getDoc(userDocRef);
-      console.log(docSnap)
     }
   },
+
   assignBoardToClient: async (boardId: string, clientId: string): Promise<void> => {
     const boardDocRef = doc(db, 'boards', boardId);
     await updateDoc(boardDocRef, {
@@ -88,6 +100,7 @@ const FirestoreService = {
   getUserRole: async (userId: string): Promise<string | null> => {
     const userDocRef = doc(db, 'users', userId);
     const docSnap = await getDoc(userDocRef);
+    console.log(docSnap);
     if (docSnap.exists()) {
       return docSnap.data().role;
     } else {

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Button,
   Flex,
   Box,
   IconButton,
@@ -19,7 +18,7 @@ const boards = [
 ];
 
 const Dashboard = () => {
-  const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
+  const [selectedBoard] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const openModal = () => {
@@ -31,6 +30,7 @@ const Dashboard = () => {
       flexDirection="column"
       width="100wh"
       height="100vh"
+      marginTop={"100px"}
       // backgroundColor="gray.200"
       position="relative" // For the absolute positioning of the Add button
     >

@@ -53,14 +53,14 @@ const LoginPane = () => {
         .then((result)=>{
           // we can get the user from result.user but no need in this case
           localStorage.removeItem('email');
-          navigate('/login');
+          navigate('/roles');
         }).catch((err: {message: string})=>{
           navigate('/login');
         })
       }
       
     }
-  },[user, search, navigate]);
+  },[user, search, navigate, auth, routes]);
 
   const handleSendLink = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -77,6 +77,7 @@ const LoginPane = () => {
   };
 
   const validateEmail = (email: string) => {
+    //@ts-ignore
     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return regex.test(email);
   };

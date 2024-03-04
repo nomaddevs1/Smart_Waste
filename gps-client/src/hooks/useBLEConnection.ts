@@ -1,11 +1,9 @@
 // useBLEConnection.ts
 import { useState } from "react";
 import { UseToastOptions } from "@chakra-ui/react";
-import { useAuth } from "../context/UserAuthContext";
-import FirestoreService from "../db/db";
 
 interface BLEConnectionHook {
-  connectToBLEDevice: (ssid: string, password: string) => Promise<void>;
+  connectToBLEDevice: (ssid: string, password: string) => Promise<string | undefined>;
   disconnectBLE: () => void;
   isConnected: boolean;
 }
@@ -16,7 +14,6 @@ export const useBLEConnection = (
   //@ts-ignore
   const [device, setDevice] = useState<BluetoothDevice | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const { user } = useAuth()!;
   const generateUUID = (): string => {
     return "xxxx-xxxx-xxxx-xxxx".replace(/[x]/g, (c) => {
       const r = (Math.random() * 16) | 0,
@@ -28,7 +25,7 @@ export const useBLEConnection = (
   const connectToBLEDevice = async (
     ssid: string,
     password: string
-  ): Promise<void> => {
+  ): Promise<string | undefined> => {
     try {
       //@ts-ignore
       const device = await navigator.bluetooth.requestDevice({
@@ -61,15 +58,16 @@ export const useBLEConnection = (
         await wifiCharacteristic.writeValue(encodedCredentials);
         
         // Set device state
-        setDevice(device);
-        setIsConnected(true);
-        
-        wifiCharacteristic.startNotifications();
-        wifiCharacteristic.addEventListener(
-          "characteristicvaluechanged",
-          (event: any) => handleWiFiStatus(event.target.value)
-          );
-          await FirestoreService.getOrg(user!.uid, serialNumber);
+      setDevice(device);
+      setIsConnected(true);
+      
+      toast({
+        title: "Connection successful",
+        description: "Wifi connected.",
+        status: "success",
+        isClosable: true,
+      });
+      return serialNumber
     } catch (error) {
       toast({
         title: "Connection Error",
@@ -78,26 +76,7 @@ export const useBLEConnection = (
         isClosable: true,
       });
     }
-  };
-  const handleWiFiStatus = (value: any) => {
-    const statusDecoder = new TextDecoder("utf-8");
-    const wifiStatus = statusDecoder.decode(value);
-
-    if (wifiStatus.includes("connected successfully")) {
-      toast({
-        title: "Success",
-        description: "Connected to WiFi successfully.",
-        status: "success",
-        isClosable: true,
-      });
-    } else {
-      toast({
-        title: "WiFi Connection Failed",
-        description: wifiStatus,
-        status: "error",
-        isClosable: true,
-      });
-    }
+    
   };
 
   const disconnectBLE = (): void => {
