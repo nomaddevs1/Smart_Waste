@@ -3,7 +3,10 @@ import { useState } from "react";
 import { UseToastOptions } from "@chakra-ui/react";
 
 interface BLEConnectionHook {
-  connectToBLEDevice: (ssid: string, password: string) => Promise<string | undefined>;
+  connectToBLEDevice: (
+    ssid: string,
+    password: string
+  ) => Promise<string | undefined>;
   disconnectBLE: () => void;
   isConnected: boolean;
 }
@@ -27,6 +30,7 @@ export const useBLEConnection = (
     password: string
   ): Promise<string | undefined> => {
     try {
+      let newSerialNumber;
       //@ts-ignore
       const device = await navigator.bluetooth.requestDevice({
         filters: [{ services: ["19b10000-e8f2-537e-4f6c-d104768a1214"] }],
@@ -47,27 +51,30 @@ export const useBLEConnection = (
       const decoder = new TextDecoder("utf-8");
       const serialNumber = await decoder.decode(value);
       if (!serialNumber || serialNumber === "No Serial Number") {
-        let newSerialNumber = generateUUID();
+        newSerialNumber = generateUUID();
+
         let encoded = new TextEncoder().encode(newSerialNumber);
         await serialCharacteristic.writeValue(encoded);
       }
       // Send SSID and Password
       const encodedCredentials = new TextEncoder().encode(
         `${ssid};${password}`
-        );
-        await wifiCharacteristic.writeValue(encodedCredentials);
-        
-        // Set device state
+      );
+      await wifiCharacteristic.writeValue(encodedCredentials);
+
+      // Set device state
       setDevice(device);
       setIsConnected(true);
-      
+
       toast({
         title: "Connection successful",
         description: "Wifi connected.",
         status: "success",
         isClosable: true,
       });
-      return serialNumber
+      return serialNumber === "No Serial Number"
+        ? newSerialNumber
+        : serialNumber;
     } catch (error) {
       toast({
         title: "Connection Error",
@@ -76,7 +83,6 @@ export const useBLEConnection = (
         isClosable: true,
       });
     }
-    
   };
 
   const disconnectBLE = (): void => {

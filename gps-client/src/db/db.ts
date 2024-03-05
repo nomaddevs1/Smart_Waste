@@ -10,7 +10,6 @@ import {
   DocumentData,
 } from "firebase/firestore";
 import data from "../auth/firebase";
-import { Organization } from '../types/types';
 const { db } = data;
 
 const FirestoreService = {
@@ -90,6 +89,7 @@ const FirestoreService = {
           lat: "",
           lng: "",
           status,
+          clientId: "",
           location: null,
         });
         // Update the organization document to include the new board ID
@@ -106,11 +106,18 @@ const FirestoreService = {
       }
   },
 
-  getBoard: async (serialNumber: string): Promise<DocumentData | null> => {
+  getBoard: async (serialNumber: string, userId: string): Promise<DocumentData | null> => {
+    const user = await FirestoreService.getUser(userId);
+    if(!user){
+      throw new Error("User not found")
+    }
+
+    if (user.role === "organization"){
     const boardDoc = await getDoc(doc(db, "boards", serialNumber));
     if (boardDoc.exists()) {
       return boardDoc.data();
     }
+  }
     return null;
   },
 

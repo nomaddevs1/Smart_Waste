@@ -14,7 +14,6 @@ import {
   FormControl,
   IconButton,
 } from "@chakra-ui/react";
-
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/UserAuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,7 +21,6 @@ import  data from "../auth/firebase";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { useFirstTimeLoginCheck } from "../hooks/useFirstTimeLoginCheck";
 import { GoogleLogo } from "@phosphor-icons/react";
-
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
@@ -35,6 +33,7 @@ const LoginPane = () => {
   const location = useLocation();
   const { search } = location;
   const { auth } = data
+  
   const routes = isFirstTime ? "/roles" : "/dashboard"
     useEffect(()=>{
       if (user) { 

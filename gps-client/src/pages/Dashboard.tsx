@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [selectedBoard] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const getBoards = {}
   const openModal = () => {
     onOpen();
   };
@@ -56,7 +57,6 @@ const Dashboard = () => {
         boardId={selectedBoard!}
       />
 
-      {/* Floating "Add" Button in the far right corner */}
       <IconButton
         icon={<WifiMedium size={32} color="#366fba" />}
         colorScheme="teal"

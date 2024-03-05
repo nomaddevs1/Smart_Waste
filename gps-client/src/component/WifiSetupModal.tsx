@@ -53,9 +53,9 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
       }
       onClose();
 
-      // const serialNumber = await connectToBLEDevice(ssid, password);
-    
-      await FirestoreService.addBoard("e33d-8370-c566-3ef6", user?.uid!);
+      let serialNumber = await connectToBLEDevice(ssid, password);
+
+      await FirestoreService.addBoard(serialNumber!, user?.uid!);
       toast({
         title: "New Board detected",
         description: "Board added",

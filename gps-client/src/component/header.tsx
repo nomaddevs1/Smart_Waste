@@ -44,7 +44,7 @@ function Header() {
         pt={[4, 4, 0, 0]}
         flex={1} 
       >
-        {user && <MenuItem><Button colorScheme='red' size='xs' onClick={handleSignOut}>SignOut</Button> </MenuItem>}
+        {user?.isAuthenticated && <MenuItem><Button colorScheme='red' size='xs' onClick={handleSignOut}>SignOut</Button> </MenuItem>}
       </Stack>
       </Flex>
       </>
