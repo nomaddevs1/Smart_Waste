@@ -39,31 +39,38 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
   const modalBackground = useColorModeValue("white", "gray.700");
   const inputBorderColor = useColorModeValue("gray.300", "gray.600");
   const buttonHoverBg = useColorModeValue("blue.600", "blue.300");
-  console.log(user)
+
   const handleSubmit = async () => {
-    if (!ssid || !password) {
-      toast({
-        title: "Error",
-        description: "Please enter your SSID and password.",
-        status: "error",
-        isClosable: true,
-      });
-      return;
-    }
-    onClose();
+    try {
+      if (!ssid || !password) {
+        toast({
+          title: "Error",
+          description: "Please enter your SSID and password.",
+          status: "error",
+          isClosable: true,
+        });
+        return;
+      }
+      onClose();
 
-    const serialNumber = await connectToBLEDevice(ssid, password);
-    const boardExits = await FirestoreService.getBoard(serialNumber!);
-
-    if (!boardExits) {
-      await FirestoreService.addBoard(serialNumber!, user?.uid!);
+      // const serialNumber = await connectToBLEDevice(ssid, password);
+    
+      await FirestoreService.addBoard("e33d-8370-c566-3ef6", user?.uid!);
       toast({
         title: "New Board detected",
         description: "Board added",
         status: "success",
         isClosable: true,
       });
-    }
+    
+  }catch (e:any) {
+      toast({
+        title: "Board Already exists",
+        description: e.message,
+        status: "info",
+        isClosable: true,
+    })
+  }
   };
   return (
     <Modal

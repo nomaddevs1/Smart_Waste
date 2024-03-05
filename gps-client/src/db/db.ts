@@ -1,111 +1,174 @@
 // Import statements for Firebase v9
-import { 
-  addDoc, 
-  collection, 
-  doc, 
-  getDoc, 
-  setDoc, 
-  updateDoc, 
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
   arrayUnion,
   DocumentData,
-} from 'firebase/firestore'; 
-import  data  from '../auth/firebase'; 
-const { db } = data
+} from "firebase/firestore";
+import data from "../auth/firebase";
+import { Organization } from '../types/types';
+const { db } = data;
 
 const FirestoreService = {
-  addOrganization: async (userId: string, name: string, email: string): Promise<string | undefined>  => {
-        try {
-            const orgRef = await addDoc(collection(db, 'organizations'), {
-                name,
-                email,
-                managers: [userId],
-                boards: [],
-                collectors: [],
-            });
-            await setDoc(doc(db, 'users', userId), {
-                organizationID: orgRef.id,
-                role: 'organization'
-            }, { merge: true });
-            return orgRef.id;
-        } catch (e) {
-            console.log(e)
-         }
+  addOrganization: async (
+    userId: string,
+    name: string,
+    email: string,
+    orgName?: string
+  ): Promise<string | undefined> => {
+    try {
+      const orgRef = await addDoc(collection(db, "organizations"), {
+        orgName,
+        email,
+        managers: [userId],
+        boards: [],
+        collectors: [],
+      });
+      await setDoc(
+        doc(db, "users", userId),
+        {
+          orgId: orgRef.id,
+          name,
+          role: "organization",
+        },
+        { merge: true }
+      );
+      return orgRef.id;
+    } catch (e: any) {
+      throw new Error(e);
+    }
   },
 
-  addClient: async (userId: string, name: string): Promise<void> => {
-    await setDoc(doc(db, 'users', userId), {
-      name,
-      role: 'client',
-      boards: []
-    }, { merge: true });
+  addClient: async (
+    userId: string,
+    name: string,
+    email: string
+  ): Promise<void> => {
+    await setDoc(
+      doc(db, "users", userId),
+      {
+        name,
+        role: "client",
+        email,
+        boards: [],
+      },
+      { merge: true }
+    );
   },
 
-  getUser: async (userId: string): Promise<DocumentData | null> =>{
-    const user = await getDoc(doc(db, 'users', userId));
+  getUser: async (userId: string): Promise<DocumentData | null> => {
+    const user = await getDoc(doc(db, "users", userId));
     if (user.exists()) {
       return user.data();
     } else {
-      console.log("No such user!");
-      return null;
+      throw new Error("No such user")
     }
   },
 
-  addBoard: async (serialNumber: string, orgId: string, status: 'empty' | 'full' = 'empty'): Promise<string> => {
-    const boardRef = await addDoc(collection(db, 'boards'), {
-      serialNumber,
-      orgId,
-      lat: "",
-      lng: "",
-      status,
-      location: null,
-    });
-  
-    return boardRef.id;
+  addBoard: async (
+    serialNumber: string,
+    userId: string,
+    status: "empty" | "full" = "empty"
+  ): Promise<string> => {
+    try {
+      const boardDocRef = doc(db, "boards", serialNumber);
+      const boardExits = await getDoc(boardDocRef)
+     
+      if (boardExits.data() !== undefined) {
+        throw new Error("Board already exits")
+      }
+      const user = await FirestoreService.getUser(userId);
+      if (user && user.role === "organization") {
+        // Add a new board document
+        await setDoc(boardDocRef, {
+          serialNumber,
+          orgId: user.orgId,
+          lat: "",
+          lng: "",
+          status,
+          location: null,
+        });
+        // Update the organization document to include the new board ID
+        const orgRef = doc(db, "organizations", user.orgId);
+        await updateDoc(orgRef, {
+          boards: arrayUnion(serialNumber),
+        });
+        return serialNumber;
+      } else {
+        throw new Error("User must be an organization to add a board.");
+      } } catch (e) {
+        console.error("Failed to add board:", e);
+        throw e; // Rethrow the error for handling elsewhere
+      }
   },
 
-  getBoard: async (serialNumber: string): Promise<Boolean> => {
-    const boardDoc = await getDoc(doc(db, 'boards', serialNumber));
-    if (boardDoc.exists()) { 
-      return true
+  getBoard: async (serialNumber: string): Promise<DocumentData | null> => {
+    const boardDoc = await getDoc(doc(db, "boards", serialNumber));
+    if (boardDoc.exists()) {
+      return boardDoc.data();
     }
-    return false
+    return null;
   },
 
-  getOrg: async (userId: string, serialNumber: string) => { 
-    //@ts-ignore
-    const role = await this.getUserRole(userId);
-    if (role === "organization") {
-      const userDocRef = doc(db, 'users', userId);
+  getOrg: async (
+    userId: string,
+    serialNumber: string
+  ): Promise<DocumentData | undefined> => {
+    const user = await FirestoreService.getUser(userId);
+    if (user!.role === "organization") {
+      const userDocRef = doc(db, "organization", user!.orgId);
       const docSnap = await getDoc(userDocRef);
+      return docSnap.data();
     }
   },
 
-  assignBoardToClient: async (boardId: string, clientId: string): Promise<void> => {
-    const boardDocRef = doc(db, 'boards', boardId);
+  getAllOrg: async (): Promise<DocumentData | undefined> => {
+    return (await getDoc(doc(db, "organization"))).data();
+  },
+  assignBoardToClient: async (
+    boardId: string,
+    clientId: string
+  ): Promise<void> => {
+    const boardDocRef = doc(db, "boards", boardId);
     await updateDoc(boardDocRef, {
-      clientID: clientId
+      clientID: clientId,
     });
-    const clientDocRef = doc(db, 'users', clientId);
+    const clientDocRef = doc(db, "users", clientId);
     await updateDoc(clientDocRef, {
-      boards: arrayUnion(boardId)
+      boards: arrayUnion(boardId),
     });
   },
 
-  setUserRole: async (userId: string, role: 'organization' | 'client' | 'collector'): Promise<void> => {
-    await setDoc(doc(db, 'users', userId), {
-      role
-    }, { merge: true });
+  setUserRole: async (
+    userId: string,
+    role: "organization" | "client" | "collector"
+  ): Promise<void> => {
+    await setDoc(
+      doc(db, "users", userId),
+      {
+        role,
+      },
+      { merge: true }
+    );
   },
 
   getUserRole: async (userId: string): Promise<string | null> => {
-    const userDocRef = doc(db, 'users', userId);
-    const docSnap = await getDoc(userDocRef);
-    console.log(docSnap);
-    if (docSnap.exists()) {
-      return docSnap.data().role;
-    } else {
-      console.log("No such user!");
-      return null;
+    try {
+      const userDocRef = doc(db, "users", userId);
+      const docSnap = await getDoc(userDocRef);
+      console.log(docSnap);
+      if (docSnap.exists()) {
+        return docSnap.data().role;
+      } else {
+        console.log("No such user!");
+        return null;
+      }
+    } catch (e: any) {
+      throw new Error(e.message);
     }
   },
 };

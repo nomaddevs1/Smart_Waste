@@ -12,6 +12,7 @@ import {
   Link,
   Avatar,
   FormControl,
+  IconButton,
 } from "@chakra-ui/react";
 
 import { FaUserAlt, FaLock } from "react-icons/fa";
@@ -20,6 +21,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import  data from "../auth/firebase";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { useFirstTimeLoginCheck } from "../hooks/useFirstTimeLoginCheck";
+import { GoogleLogo } from "@phosphor-icons/react";
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
@@ -145,22 +147,13 @@ const LoginPane = () => {
               >
                 Sign In With Link
               </Button>
-              <Button
-                borderRadius={0}
-                type="submit"
-                variant="solid"
-                colorScheme="teal"
-                width="full"
-              >
-                Signup
-              </Button>
             </Stack>
           </form>
         </Box>
       </Stack>
       <Box>
         <Link color="teal.500" onClick={(e) => handleGoogleSign(e)}>
-          Sign Up with
+          Sign In with <IconButton icon={<GoogleLogo size={32} color="#3b8791" weight="fill" />} aria-label="google" background={"transparent"}/>
         </Link>
       </Box>
     </Flex>

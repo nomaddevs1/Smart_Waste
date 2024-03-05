@@ -11,8 +11,8 @@ function App() {
     <Flex height="100vh" flexDirection="column" overflowY={'hidden'}>
       <Header/>
       <Routes>
-        <Route path="/dashboard"  element={<Dashboard/>} />
         <Route path="/login"  element={<LoginPane/>} />
+        <Route path="/dashboard"  element={<Dashboard/>} />
         <Route path="/roles"  element={<Role/>} />
         {/* Add more routes as needed */}
       </Routes>
