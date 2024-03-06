@@ -8,8 +8,10 @@ import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "./context/UserAuthContext";
 import NotFound from "./pages/404";
 
-import Map from "./components/map";
+import Map from "./component/Map";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
+import { MapProvider } from "./context/MapContext";
+import Marker from "./component/Marker";
 
 function App() {
   const {  isAuthenticated } = useAuth()!;
