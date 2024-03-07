@@ -3,6 +3,8 @@ import { createContext, useContext, useState, useEffect, useRef } from 'react';
 interface MapContextProps {
   mapRef: React.RefObject<HTMLDivElement>;
   map: google.maps.Map | undefined;
+  directionsService: google.maps.DirectionsService;
+  directionsRenderer: google.maps.DirectionsRenderer;
 }
 
 const MapContext = createContext<MapContextProps | null>(null);
@@ -10,6 +12,8 @@ const MapContext = createContext<MapContextProps | null>(null);
 export const MapProvider = ({ children }: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>()
+  const directionsService = new google.maps.DirectionsService();
+  const directionsRenderer = new google.maps.DirectionsRenderer();
   
   useEffect(() => {
     if (mapRef.current && map === undefined) {
@@ -26,7 +30,7 @@ export const MapProvider = ({ children }: any) => {
   }, [map]);
 
   return (
-    <MapContext.Provider value={{ mapRef, map }}>
+    <MapContext.Provider value={{ mapRef, map, directionsService, directionsRenderer }}>
       {children}
     </MapContext.Provider>
   );
