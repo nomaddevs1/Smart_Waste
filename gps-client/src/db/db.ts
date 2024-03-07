@@ -4,10 +4,13 @@ import {
   collection,
   doc,
   getDoc,
+  query,
   setDoc,
   updateDoc,
   arrayUnion,
   DocumentData,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import data from "../auth/firebase";
 const { db } = data;
@@ -121,6 +124,23 @@ const FirestoreService = {
     return null;
   },
 
+  getAllBoardsForOrg: async(userId: string): Promise< DocumentData[] | []> =>{
+    try {
+      const user = await FirestoreService.getUser(userId)
+      const que = user!.role === "organization" ? "orgId": "clientId"
+      const id = user!.role === "organization" ? user!.orgId : userId
+      const boardsRef = collection(db, "boards");
+      const q = query(boardsRef, where(que, "==", id)); // Adjust "orgId" to "userId" if needed
+
+      const querySnapshot = await getDocs(q);
+      const boards = querySnapshot.docs.map(doc => doc.data());
+      return boards;
+    } catch (error) {
+      console.error("Failed to fetch boards:", error);
+      return [];
+    }
+  },
+
   getOrg: async (
     userId: string,
     serialNumber: string
@@ -136,6 +156,7 @@ const FirestoreService = {
   getAllOrg: async (): Promise<DocumentData | undefined> => {
     return (await getDoc(doc(db, "organization"))).data();
   },
+
   assignBoardToClient: async (
     boardId: string,
     clientId: string
@@ -167,11 +188,9 @@ const FirestoreService = {
     try {
       const userDocRef = doc(db, "users", userId);
       const docSnap = await getDoc(userDocRef);
-      console.log(docSnap);
       if (docSnap.exists()) {
         return docSnap.data().role;
       } else {
-        console.log("No such user!");
         return null;
       }
     } catch (e: any) {

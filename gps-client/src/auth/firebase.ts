@@ -2,13 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import 'firebase/firestore'
 import { getAuth } from "firebase/auth";
+
 const firebaseConfig = {
-  apiKey: "AIzaSyA5BjOCyxaZu2S_zE8MHlQ7uY-LUScj_DY",
-  authDomain: "smart-waste-6f496.firebaseapp.com",
-  projectId: "smart-waste-6f496",
-  storageBucket: "smart-waste-6f496.appspot.com",
-  messagingSenderId: "1032147834195",
-  appId: "1:1032147834195:web:f278273336ba80fd9cbda6"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_MESSAGE_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID
 };
 
 // Initialize Firebase

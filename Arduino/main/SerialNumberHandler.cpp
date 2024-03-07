@@ -13,7 +13,6 @@ void initializeSerialNumberCharacteristic() {
     }
     Serial.println(serialNumber);
     if (serialNumber.length() > 0) {
-        Serial.println("Yay");
         serialNumberCharacteristic.writeValue(serialNumber.c_str(), serialNumber.length());
     } else {
         serialNumberCharacteristic.writeValue("No Serial Number");

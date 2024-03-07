@@ -8,7 +8,7 @@ import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
-    <Flex height="100vh" flexDirection="column" overflowY={'hidden'}>
+    <Flex height="100vh" flexDirection="column" overflowY={'hidden'} backgroundColor="gray.200">
       <Header/>
       <Routes>
         <Route path="/login"  element={<LoginPane/>} />

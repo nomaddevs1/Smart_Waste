@@ -1,56 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
-  Box,
   IconButton,
-  useDisclosure,
-  Wrap,
-  WrapItem,
+  useDisclosure
 } from "@chakra-ui/react";
 import { WifiMedium } from "@phosphor-icons/react";
 import WifiSetupModal from "../component/WifiSetupModal";
-
-// Assuming you have a list of boards, here's a mocked example
-const boards = [
-  { id: 1, name: "Board 1" },
-  { id: 2, name: "Board 2" },
-  // Add more boards as needed
-];
+import FirestoreService from "../db/db";
+import { useAuth } from "../context/UserAuthContext";
+import { DocumentData } from "firebase/firestore";
+import Cards from "../component/Card";
 
 const Dashboard = () => {
   const [selectedBoard] = useState<string | null>(null);
+  const [boards, setBoard] = useState<[] | DocumentData[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {user} = useAuth()!
 
-  const getBoards = {}
+
+useEffect(() => {
+  // Ensure user is defined before attempting to fetch data
+  if (user) {
+    const fetchBoards = async () => {
+      try {
+        const data = await FirestoreService.getAllBoardsForOrg(user.uid);
+        const flattenedData = data.flat();
+        setBoard(flattenedData);
+      } catch (error) {
+        console.error("Error fetching boards:", error);
+      }
+    };
+
+    fetchBoards();
+  }
+}, [user, boards])
+
   const openModal = () => {
     onOpen();
   };
 
   return (
     <Flex
-      flexDirection="column"
+      // flexDirection="column"
       width="100wh"
-      height="100vh"
       marginTop={"100px"}
-      // backgroundColor="gray.200"
-      position="relative" // For the absolute positioning of the Add button
+      
+      // For the absolute positioning of the Add button
     >
-      <Wrap spacing="30px" justify="center">
-        {boards.map((board) => (
-          <WrapItem key={board.id}>
-            <Box
-              p="10"
-              borderWidth="1px"
-              borderRadius="lg"
-              boxShadow="lg"
-              bg="white"
-              alignItems={"center"}
-            >
-              {board.name}
-            </Box>
-          </WrapItem>
-        ))}
-      </Wrap>
+      <Cards boards={boards}/>
       <WifiSetupModal
         isOpen={isOpen}
         onClose={onClose}
@@ -62,8 +59,8 @@ const Dashboard = () => {
         colorScheme="teal"
         borderRadius="full"
         position="absolute"
-        bottom="4"
-        right="4"
+        bottom="25"
+        right="5"
         aria-label="Add Button"
         onClick={() => openModal()}
       />

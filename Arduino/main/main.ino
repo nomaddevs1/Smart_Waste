@@ -33,10 +33,9 @@ void setBLEcharacteristics(){
   BLE.addService(wifiService);
 
   BLE.setEventHandler(BLEConnected, blePeripheralConnectHandler);
-  BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
   wifiCharacteristic.setEventHandler(BLEWritten, wifiCharacteristicWritten);
   serialNumberCharacteristic.setEventHandler(BLEWritten, serialNumberCharacteristicWritten);
-  // wifiCharacteristic.writeValue("Ready"); // Initial value
+  BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
   BLE.setAdvertisedService(wifiService);
   BLE.advertise();
 }
@@ -51,30 +50,34 @@ void blePeripheralConnectHandler(BLEDevice central) {
 void blePeripheralDisconnectHandler(BLEDevice central) {
   Serial.print("Disconnected from central: ");
   Serial.println(central.address());
-  // initializeBLE(); // Re-initialize to allow reconnection
 }
 
 void setup()
 {
     Serial.begin(9600);
+    // clearEEprom();
     BLE.begin();
     setBLEcharacteristics();
     initializeSerialNumberCharacteristic();
-    // initializeBLE();
     setupGPS();
     pinMode(trigPin, OUTPUT);
     pinMode(echoPin, INPUT);
     sentHTTP = false;
 }
 
+
+void clearEEprom(){
+    for (int i = 0 ; i < EEPROM.length() ; i++) {
+      EEPROM.write(i, 0);
+    }
+}
+
 void loop()
 {
   distanceCalc(trigPin, echoPin, distance);
   if (distance > 10.0){
-    Serial.println("Distance not reached");
     sentHTTP = false;
     BLE.poll();
-    delay(2000);
     return;
   }
 
@@ -82,7 +85,7 @@ void loop()
     readGPS(latitude, longitude);
     if (gnggaCaptured)
       {
-          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + "}";
+          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + ", \"serialNumber\":" + serialNumber + "}";
       }
   }
   
