@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Flex,
   IconButton,
@@ -19,7 +19,6 @@ const Dashboard = () => {
 
 
 useEffect(() => {
-  // Ensure user is defined before attempting to fetch data
   if (user) {
     const fetchBoards = async () => {
       try {
@@ -33,7 +32,7 @@ useEffect(() => {
 
     fetchBoards();
   }
-}, [user, boards])
+}, [user])
 
   const openModal = () => {
     onOpen();

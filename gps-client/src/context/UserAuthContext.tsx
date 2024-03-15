@@ -7,6 +7,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import { useToast } from "@chakra-ui/react";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -25,7 +26,7 @@ export const AuthContext = createContext<UserContextState | null>(null);
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const toast = useToast()
   const auth1 = data.auth;
   useEffect(() => {
     const unsubscribe = auth1.onAuthStateChanged(
@@ -64,9 +65,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     })
       .then(() => {
         localStorage.setItem("email", email);
+        toast({
+          title: "Success",
+          description: "Email sent successfully",
+          status: "success",
+          isClosable: true,
+        });
       })
       .catch((err) => {
-        console.log(err.message);
+        toast({
+          title: "Error",
+          description: "Email failed to send. You can use the sign in with google.",
+          status: "error",
+          isClosable: true,
+        });
       });
   };
 

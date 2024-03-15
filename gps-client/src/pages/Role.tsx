@@ -58,7 +58,7 @@ const RoleSelectionPage = () => {
           borderWidth="1px"
           borderRadius="lg"
           boxShadow="lg"
-          backgroundColor="white"
+          backgroundColor="blue.900"
         >
           <VStack>
             <Heading as="h1" size="lg">

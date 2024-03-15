@@ -11,6 +11,7 @@ import {
   DocumentData,
   where,
   getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import data from "../auth/firebase";
 const { db } = data;
@@ -139,6 +140,25 @@ const FirestoreService = {
       console.error("Failed to fetch boards:", error);
       return [];
     }
+  },
+  listenForBoardUpdates: async (userId: string, onUpdate: (boards: DocumentData[]) => void) => {
+    const { role } = await FirestoreService.getUser(userId) as DocumentData;
+    const userType = role === "organization" ? "orgId" : "clientId";
+    const boardsRef = collection(db, "boards");
+    const q = query(boardsRef, where(userType, "==", userId));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const boardsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      onUpdate(boardsData);
+    }, (error) => {
+      console.error("Error listening to boards updates:", error);
+    });
+
+    // Return the unsubscribe function so it can be called to stop listening for updates
+    return unsubscribe;
   },
 
   getOrg: async (
