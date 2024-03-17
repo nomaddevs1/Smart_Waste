@@ -12,11 +12,11 @@ function Map() {
   if (navigator.geolocation && map) {
     navigator.geolocation.getCurrentPosition(
       (position: GeolocationPosition) => {
-        const pos = {
+        const userPosition = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        map.panTo(pos);
+        map.panTo(userPosition);
       }, () => {
         console.log("Geolocation service failed.");
       }

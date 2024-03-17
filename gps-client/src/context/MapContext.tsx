@@ -21,13 +21,17 @@ export const MapProvider = ({ children }: any) => {
         new window.google.maps.Map(mapRef.current, {
           mapId: '6e5a2f90fad8af6e',
           center: { lat: 33.2106633, lng: -97.1498416 },
-          zoom: 15,
+          zoom: 14,
           disableDefaultUI: true,
           clickableIcons: false,
         })
       )
     }
   }, [map]);
+
+  if (map){
+    directionsRenderer.setMap(map);
+  }
 
   return (
     <MapContext.Provider value={{ mapRef, map, directionsService, directionsRenderer }}>

@@ -1,19 +1,18 @@
 import { useMapContext } from '../context/MapContext';
 
 interface useDirectionsProps {
-  calculateRoute: () => void;
+  calculateRoute: (origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) => void;
 }
 
 export const useDirections = (): useDirectionsProps => {
   const { directionsRenderer, directionsService } = useMapContext();
 
-  const calculateRoute = () => {
+  const calculateRoute = (origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) => {
     console.log("calculating route...");
-    /*
     directionsService
       .route({
-        origin: "33.086439, -97.111816",
-        destination: "33.2106633, -97.1498416",
+        origin,
+        destination,
         travelMode: google.maps.TravelMode.DRIVING,
       })
       .then((response) => {
@@ -21,7 +20,6 @@ export const useDirections = (): useDirectionsProps => {
         directionsRenderer.setDirections(response);
       })
       .catch((e) => window.alert("Directions request failed"));
-    */
   }
 
   return {calculateRoute}

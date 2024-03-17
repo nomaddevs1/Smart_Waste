@@ -9,7 +9,9 @@ function AddMarker () {
   }
 
   return (
-    <Button pos="absolute" left="4" bottom="4" width="100px" onClick={addMarker}>Create Marker</Button>
+    <>
+      <Button pos="absolute" left="4" bottom="4" width="100px" onClick={addMarker}>Create Marker</Button>
+    </>
   )
 }
 
