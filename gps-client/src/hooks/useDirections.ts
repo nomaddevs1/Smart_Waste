@@ -16,7 +16,6 @@ export const useDirections = (): useDirectionsProps => {
         travelMode: google.maps.TravelMode.DRIVING,
       })
       .then((response) => {
-        console.log(response);
         directionsRenderer.setDirections(response);
       })
       .catch((e) => window.alert("Directions request failed"));

@@ -13,7 +13,7 @@ export const MapProvider = ({ children }: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>()
   const directionsService = new google.maps.DirectionsService();
-  const directionsRenderer = new google.maps.DirectionsRenderer();
+  const directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
   
   useEffect(() => {
     if (mapRef.current && map === undefined) {
