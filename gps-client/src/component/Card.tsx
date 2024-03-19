@@ -20,6 +20,7 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
       spacing={4}
       templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
       margin={2}
+      
     >
       {boards.map((board, i) => (
         <Card maxW="sm" key={i}>

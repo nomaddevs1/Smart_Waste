@@ -28,7 +28,7 @@ function Header() {
     >
       <Logo
         w="100px"
-        color={["white", "white", "blue.900", "blue.900"]}
+        color={["white", "blue.900",]}
       />
       <Stack
         spacing={8}

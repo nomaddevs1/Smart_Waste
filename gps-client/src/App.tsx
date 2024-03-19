@@ -6,10 +6,11 @@ import Header from "./component/header";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "./context/UserAuthContext";
+import NotFound from "./pages/404";
 
 
 function App() {
-  const { user, isAuthenticated } = useAuth()!;
+  const {  isAuthenticated } = useAuth()!;
   
   return (
     <Flex height="100vh" flexDirection="column" overflowY={'hidden'} >
@@ -28,7 +29,7 @@ function App() {
                 {/* Redirect unauthenticated users to /login, and authenticated users to /dashboard */}
         <Route path="/" element={isAuthenticated ? <Navigate replace to="/dashboard" /> : <Navigate replace to="/login" />} />
         {/* Catch-all route */}
-        <Route path="*" element={<Navigate replace to={isAuthenticated ? "/dashboard" : "/login"} />} />
+        <Route path="*" element={<NotFound/>} />
 
       </Routes>
    

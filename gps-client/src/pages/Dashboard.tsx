@@ -17,7 +17,6 @@ const Dashboard = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {user} = useAuth()!
 
-
 useEffect(() => {
   if (user) {
     const fetchBoards = async () => {
@@ -33,6 +32,12 @@ useEffect(() => {
     fetchBoards();
   }
 }, [user])
+  
+  useEffect(() => {
+    FirestoreService.listenForBoardUpdates(user!.uid, (data) => {
+      setBoard(data)
+    })
+  }, [])
 
   const openModal = () => {
     onOpen();
@@ -40,11 +45,9 @@ useEffect(() => {
 
   return (
     <Flex
-      // flexDirection="column"
       width="100wh"
       marginTop={"100px"}
-      
-      // For the absolute positioning of the Add button
+      overflowY={"auto"}
     >
       <Cards boards={boards}/>
       <WifiSetupModal

@@ -92,7 +92,6 @@ const LoginPane = () => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundColor="blue.900"
       justifyContent="center"
       alignItems="center"
     >
