@@ -8,7 +8,6 @@ export const useDirections = (): useDirectionsProps => {
   const { directionsRenderer, directionsService } = useMapContext();
 
   const calculateRoute = (origin: google.maps.LatLngLiteral, destination: google.maps.LatLngLiteral) => {
-    console.log("calculating route...");
     directionsService
       .route({
         origin,

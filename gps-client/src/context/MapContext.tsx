@@ -5,14 +5,15 @@ interface MapContextProps {
   map: google.maps.Map | undefined;
   directionsService: google.maps.DirectionsService;
   directionsRenderer: google.maps.DirectionsRenderer;
-  userLocationRef: React.RefObject<google.maps.LatLngLiteral>
+  userLocation: google.maps.LatLngLiteral | undefined;
+  updateUserLocation: (newLocation: google.maps.LatLngLiteral) => void;
 }
 
 const MapContext = createContext<MapContextProps | null>(null);
 
 export const MapProvider = ({ children }: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const userLocationRef = useRef<google.maps.LatLngLiteral>(null);
+  const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral>();
   const [map, setMap] = useState<google.maps.Map>()
   const directionsService = new google.maps.DirectionsService();
   const directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
@@ -35,8 +36,12 @@ export const MapProvider = ({ children }: any) => {
     directionsRenderer.setMap(map);
   }
 
+  const updateUserLocation = (newLocation: google.maps.LatLngLiteral) => {
+    setUserLocation(newLocation);
+  }
+
   return (
-    <MapContext.Provider value={{ mapRef, map, directionsService, directionsRenderer, userLocationRef }}>
+    <MapContext.Provider value={{ mapRef, map, directionsService, directionsRenderer, userLocation, updateUserLocation }}>
       {children}
     </MapContext.Provider>
   );

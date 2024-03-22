@@ -8,7 +8,7 @@ function Map() {
   useEffect(() => {
     window.google.maps.importLibrary('marker');
   }, []);
-
+  
   if (navigator.geolocation && map) {
     navigator.geolocation.getCurrentPosition(
       (position: GeolocationPosition) => {

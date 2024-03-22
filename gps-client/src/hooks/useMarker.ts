@@ -10,7 +10,7 @@ interface useMarkerProps {
 }
 
 export const useMarker = (): useMarkerProps => {
-  const { map } = useMapContext();
+  const { map, userLocation } = useMapContext();
   const { calculateRoute } = useDirections();
   let markers: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
@@ -20,7 +20,7 @@ export const useMarker = (): useMarkerProps => {
     binEmpty.style.width = '20px';
     binEmpty.style.height = '20px';
 
-    const binGlyph = new google.maps.marker.PinElement({
+    const binEmptyGlyph = new google.maps.marker.PinElement({
       glyph: binEmpty,
       scale: 1.2,
       background: '#37a132',
@@ -28,18 +28,10 @@ export const useMarker = (): useMarkerProps => {
     });
 
     const getRoute = () => {
-      if (navigator.geolocation && map) {
-        navigator.geolocation.getCurrentPosition(
-          (position: GeolocationPosition) => {
-            const userPosition = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
-            calculateRoute(userPosition, markerPosition);
-          }, () => {
-            console.log("Geolocation service failed.");
-          }
-        )
+      if (userLocation){
+        calculateRoute(userLocation, markerPosition);
+      } else {
+        alert ("User location not found, please enable location services");
       }
     }
 
@@ -52,7 +44,7 @@ export const useMarker = (): useMarkerProps => {
       const newMarker = new google.maps.marker.AdvancedMarkerElement({
         map,
         position: markerPosition, 
-        content: binGlyph.element,
+        content: binEmptyGlyph.element,
         title: `Board: ${boardSerial}`,
       })
 
