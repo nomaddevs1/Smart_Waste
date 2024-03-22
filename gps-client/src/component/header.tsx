@@ -17,7 +17,7 @@ function Header() {
     <>
     <Flex
       width="100%"
-      bg={["blue.900", "blue.900", "transparent", "transparent"]}
+      bg="blue.900"
       height="80px"
       alignItems="center"
       pos="fixed"
@@ -28,7 +28,7 @@ function Header() {
     >
       <Logo
         w="100px"
-        color={["white", "blue.900",]}
+        color="white"
       />
       <Stack
         spacing={8}

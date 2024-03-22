@@ -7,24 +7,19 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "./context/UserAuthContext";
 import NotFound from "./pages/404";
-
 import Map from "./component/Map";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
-import { MapProvider } from "./context/MapContext";
 import Marker from "./component/Marker";
+import { MapProvider } from "./context/MapContext";
 
 function App() {
   const {  isAuthenticated } = useAuth()!;
-  
-  const center = { lat: 33.2101, lng: -97.1490 };
-  const zoom = 15;
+  const mapKey = `${process.env.REACT_APP_MAPS_API_KEY}`;
 
   const render = (status: Status): any => {
     if (status === Status.SUCCESS) return;
     return null;
   };
-
-  const apiKey = `${process.env.REACT_APP_GOOGLE_API_KEY}`;
 
   return (
     <Flex height="100vh" flexDirection="column" overflowY={'hidden'} >
@@ -35,6 +30,14 @@ function App() {
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
+        } />
+        <Route path="/map" element={
+          <Wrapper render={render} apiKey={mapKey}>
+            <MapProvider>
+              <Map />
+              <Marker />
+            </MapProvider>
+          </Wrapper>
         } />
         <Route path="/roles" element={
           <ProtectedRoute>

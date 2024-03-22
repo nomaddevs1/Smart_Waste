@@ -17,8 +17,8 @@ function AddMarker () {
 
   return (
     <>
-      <Button pos="absolute" left="4" bottom="4" width="100px" onClick={addMarker}>Create Marker</Button>
-      <Button pos="absolute" left="4" bottom="30" width="100px" onClick={update}>Update Marker</Button>
+      <Button pos="absolute" left="4" bottom="2%" width="150px" onClick={addMarker}>Create Marker</Button>
+      <Button pos="absolute" left="4" bottom="8%" width="150px" onClick={update}>Update Marker</Button>
     </>
   )
 }
