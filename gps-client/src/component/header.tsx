@@ -2,7 +2,6 @@ import { Flex, Stack,Button } from "@chakra-ui/react";
 import data from "../auth/firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserAuthContext";
-import { useEffect } from "react";
 import { Logo } from "./Logo";
 import { MenuItem } from "./MenuItem";
 
@@ -14,16 +13,11 @@ function Header() {
     await data.auth.signOut();
     navigate('/login');
   }
-
-  useEffect(() => {
-    if(!user!.isAuthenticated) navigate('/login');
-  })
-
   return (
     <>
     <Flex
       width="100%"
-      bg={["primary.500", "primary.500", "transparent", "transparent"]}
+      bg={["blue.900", "blue.900", "transparent", "transparent"]}
       height="80px"
       alignItems="center"
       pos="fixed"
@@ -34,7 +28,7 @@ function Header() {
     >
       <Logo
         w="100px"
-        color={["white", "white", "primary.500", "primary.500"]}
+        color={["white", "blue.900",]}
       />
       <Stack
         spacing={8}

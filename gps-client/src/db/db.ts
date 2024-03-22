@@ -11,6 +11,7 @@ import {
   DocumentData,
   where,
   getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import data from "../auth/firebase";
 const { db } = data;
@@ -67,7 +68,7 @@ const FirestoreService = {
     if (user.exists()) {
       return user.data();
     } else {
-      throw new Error("No such user")
+      throw new Error("No such user");
     }
   },
 
@@ -78,10 +79,10 @@ const FirestoreService = {
   ): Promise<string> => {
     try {
       const boardDocRef = doc(db, "boards", serialNumber);
-      const boardExits = await getDoc(boardDocRef)
-     
+      const boardExits = await getDoc(boardDocRef);
+
       if (boardExits.data() !== undefined) {
-        throw new Error("Board already exits")
+        throw new Error("Board already exits");
       }
       const user = await FirestoreService.getUser(userId);
       if (user && user.role === "organization") {
@@ -103,42 +104,73 @@ const FirestoreService = {
         return serialNumber;
       } else {
         throw new Error("User must be an organization to add a board.");
-      } } catch (e) {
-        console.error("Failed to add board:", e);
-        throw e; // Rethrow the error for handling elsewhere
       }
+    } catch (e) {
+      console.error("Failed to add board:", e);
+      throw e; // Rethrow the error for handling elsewhere
+    }
   },
 
-  getBoard: async (serialNumber: string, userId: string): Promise<DocumentData | null> => {
+  getBoard: async (
+    serialNumber: string,
+    userId: string
+  ): Promise<DocumentData | null> => {
     const user = await FirestoreService.getUser(userId);
-    if(!user){
-      throw new Error("User not found")
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    if (user.role === "organization"){
-    const boardDoc = await getDoc(doc(db, "boards", serialNumber));
-    if (boardDoc.exists()) {
-      return boardDoc.data();
+    if (user.role === "organization") {
+      const boardDoc = await getDoc(doc(db, "boards", serialNumber));
+      if (boardDoc.exists()) {
+        return boardDoc.data();
+      }
     }
-  }
     return null;
   },
 
-  getAllBoardsForOrg: async(userId: string): Promise< DocumentData[] | []> =>{
+  getAllBoardsForOrg: async (userId: string): Promise<DocumentData[] | []> => {
     try {
-      const user = await FirestoreService.getUser(userId)
-      const que = user!.role === "organization" ? "orgId": "clientId"
-      const id = user!.role === "organization" ? user!.orgId : userId
+      const user = await FirestoreService.getUser(userId);
+      const que = user!.role === "organization" ? "orgId" : "clientId";
+      const id = user!.role === "organization" ? user!.orgId : userId;
       const boardsRef = collection(db, "boards");
       const q = query(boardsRef, where(que, "==", id)); // Adjust "orgId" to "userId" if needed
 
       const querySnapshot = await getDocs(q);
-      const boards = querySnapshot.docs.map(doc => doc.data());
+      const boards = querySnapshot.docs.map((doc) => doc.data());
       return boards;
     } catch (error) {
       console.error("Failed to fetch boards:", error);
       return [];
     }
+  },
+  listenForBoardUpdates: async (
+    userId: string,
+    onUpdate: (boards: DocumentData[]) => void
+  ) => {
+    const user = await FirestoreService.getUser(userId);
+    const que = user!.role === "organization" ? "orgId" : "clientId";
+    const id = user!.role === "organization" ? user!.orgId : userId;
+    const boardsRef = collection(db, "boards");
+    const q = query(boardsRef, where(que, "==", id)); // Adjust "orgId" to "userId" if needed
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const boardsData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        onUpdate(boardsData);
+      },
+      (error) => {
+        console.error("Error listening to boards updates:", error);
+      }
+    );
+
+    // Return the unsubscribe function so it can be called to stop listening for updates
+    return unsubscribe;
   },
 
   getOrg: async (

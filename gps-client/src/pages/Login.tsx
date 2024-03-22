@@ -52,7 +52,6 @@ const LoginPane = () => {
         //@ts-ignore
         signInWithEmailLink(auth, localStorage.getItem('email'), window.location.href)
         .then((result)=>{
-          // we can get the user from result.user but no need in this case
           localStorage.removeItem('email');
           navigate('/roles');
         }).catch((err: {message: string})=>{
@@ -93,7 +92,6 @@ const LoginPane = () => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundColor="gray.200"
       justifyContent="center"
       alignItems="center"
     >
@@ -110,7 +108,7 @@ const LoginPane = () => {
             <Stack
               spacing={4}
               p="1rem"
-              backgroundColor="whiteAlpha.900"
+              backgroundColor="blue.900"
               boxShadow="md"
             >
               <FormControl>
@@ -123,6 +121,7 @@ const LoginPane = () => {
                     type="email"
                     placeholder="email address"
                     onChange={handleChange}
+                    color={"black"}
                   />
                 </InputGroup>
               </FormControl>
@@ -131,7 +130,7 @@ const LoginPane = () => {
                   <InputLeftElement
                     pointerEvents="none"
                     color="gray.300"
-                    children={<CFaLock color="gray.300" />}
+                    children={<CFaLock color="black" />}
                   />
                 </InputGroup>
               </FormControl>
