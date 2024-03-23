@@ -2,13 +2,11 @@ import { Button } from "@chakra-ui/react";
 import { useMarker } from "../hooks/useMarker";
 
 function AddMarker () {
-  const { createMarker, markers, updateMarker } = useMarker();
+  const { createMarker, updateMarker } = useMarker();
 
   const addMarker = () => {
     createMarker({ lat: 33.2106633, lng: -97.1498416 }, "ABC")
     createMarker({ lat: 33.252807, lng: -97.152697 }, "XYZ")
-
-    console.log(markers);
   }
 
   const update = () => {

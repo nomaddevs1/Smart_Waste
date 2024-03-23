@@ -1,5 +1,6 @@
 import { useMapContext } from '../context/MapContext';
 import { useDirections } from './useDirections';
+import { useGeolocation } from './useGeolocation';
 import bin_empty from '../assets/bin_empty.svg';
 import bin_full from '../assets/bin_full.svg';
 
@@ -10,7 +11,8 @@ interface useMarkerProps {
 }
 
 export const useMarker = (): useMarkerProps => {
-  const { map, userLocation } = useMapContext();
+  const { map } = useMapContext();
+  const { userLocation } = useGeolocation();
   const { calculateRoute } = useDirections();
   let markers: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
