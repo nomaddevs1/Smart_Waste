@@ -7,7 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "./context/UserAuthContext";
 import NotFound from "./pages/404";
-import Map from "./component/Map";
+import Map from "./pages/Map";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import Marker from "./component/Marker";
 import { MapProvider } from "./context/MapContext";

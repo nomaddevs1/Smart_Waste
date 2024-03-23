@@ -1,6 +1,6 @@
 import { Flex, Stack,Button } from "@chakra-ui/react";
 import data from "../auth/firebase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserAuthContext";
 import { Logo } from "./Logo";
 import { MenuItem } from "./MenuItem";
@@ -38,7 +38,17 @@ function Header() {
         pt={[4, 4, 0, 0]}
         flex={1} 
       >
-        {user?.isAuthenticated && <MenuItem><Button colorScheme='red' size='xs' onClick={handleSignOut}>SignOut</Button> </MenuItem>}
+        {user?.isAuthenticated && (
+          <>
+            <Link to="/dashboard">
+              <Button variant="link" color="white">Dashboard</Button>
+            </Link>
+            <Link color="white" to="/map">
+              <Button variant="link" color="white">Map</Button>
+            </Link>
+            <MenuItem><Button colorScheme='red' size='xs' onClick={handleSignOut}>SignOut</Button> </MenuItem>
+          </>
+        )}
       </Stack>
       </Flex>
       </>
