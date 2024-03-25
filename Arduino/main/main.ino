@@ -9,8 +9,11 @@
 String jsonData;
 float latitude, longitude;
 float distance;
+float distance2;
 const int trigPin = 9;
+const int trigPin2 = 7;
 const int echoPin = 10;
+const int echoPin2 = 6;
 bool sentHTTP;
 
 // UUIDs for the BLE service and characteristic
@@ -61,7 +64,9 @@ void setup()
     initializeSerialNumberCharacteristic();
     setupGPS();
     pinMode(trigPin, OUTPUT);
+    pinMode(trigPin2, OUTPUT);
     pinMode(echoPin, INPUT);
+    pinMode(echoPin2, INPUT);
     sentHTTP = false;
 }
 
@@ -75,7 +80,8 @@ void clearEEprom(){
 void loop()
 {
   distanceCalc(trigPin, echoPin, distance);
-  if (distance > 10.0){
+  distanceCalc(trigPin2, echoPin2, distance2);
+  if (distance > 10.0 && distance2 > 10.0){
     sentHTTP = false;
     BLE.poll();
     return;
@@ -85,19 +91,17 @@ void loop()
     readGPS(latitude, longitude);
     if (gnggaCaptured)
       {
-          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + ", \"serialNumber\":" + serialNumber + "}";
+          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + ", \"serialNumber\":" + "}";
       }
   }
   
 
-  if (WiFi.status() == WL_CONNECTED && gnggaCaptured && distance < 10.0 && !sentHTTP)
+  if (WiFi.status() == WL_CONNECTED && gnggaCaptured && distance < 10.0 && distance2 < 10.0 && !sentHTTP)
   {
-      Serial.println("Distance threshold triggered, waiting 5 seconds.");
       delay(5000);
       distanceCalc(trigPin, echoPin, distance);
       if(distance < 10.0){
         sendHttpRequest(jsonData);
-        Serial.println("JSONDATA: " + jsonData);
         sentHTTP = true;
       }
   }
