@@ -186,7 +186,16 @@ const FirestoreService = {
   },
 
   getAllOrg: async (): Promise<DocumentData | undefined> => {
-    return (await getDoc(doc(db, "organization"))).data();
+    const orgList: {id: string, data: any}[] = [];
+    const querySnapshot = await getDocs(collection(db, "organizations"));
+    querySnapshot.forEach((doc) => {
+      orgList.push({
+        id: doc.id,
+        data: doc.data()
+      });
+    });
+
+    return orgList
   },
 
   assignBoardToClient: async (
