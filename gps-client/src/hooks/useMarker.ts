@@ -5,8 +5,7 @@ import bin_empty from '../assets/bin_empty.svg';
 import bin_full from '../assets/bin_full.svg';
 
 interface useMarkerProps {
-  createMarker: (position: google.maps.LatLngLiteral, boardSerial: string) => void;
-  updateMarker: (markerIndex: number) => void;
+  createMarker: (position: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => void;
   markers: Array<google.maps.marker.AdvancedMarkerElement>
 }
 
@@ -16,17 +15,17 @@ export const useMarker = (): useMarkerProps => {
   const { calculateRoute } = useDirections();
   let markers: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
-  const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string) => {
-    const binEmpty = document.createElement('img');
-    binEmpty.src = bin_empty;
-    binEmpty.style.width = '20px';
-    binEmpty.style.height = '20px';
+  const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => {
+    const binSvg = document.createElement('img');
+    binSvg.src = binStatus === "full" ? bin_empty : bin_full;
+    binSvg.style.width = '20px';
+    binSvg.style.height = '20px';
 
-    const binEmptyGlyph = new google.maps.marker.PinElement({
-      glyph: binEmpty,
+    const binGlyph = new google.maps.marker.PinElement({
+      glyph: binSvg,
       scale: 1.2,
-      background: '#37a132',
-      borderColor: '#1d571a',
+      background: binStatus === "full" ? '#37a132' : '#ba423c',
+      borderColor: binStatus === "full" ? '#1d571a': '#591e1b',
     });
 
     const getRoute = () => {
@@ -46,7 +45,7 @@ export const useMarker = (): useMarkerProps => {
       const newMarker = new google.maps.marker.AdvancedMarkerElement({
         map,
         position: markerPosition, 
-        content: binEmptyGlyph.element,
+        content: binGlyph.element,
         title: `Board: ${boardSerial}`,
       })
 
@@ -63,6 +62,7 @@ export const useMarker = (): useMarkerProps => {
     }
   }
 
+  /*
   const updateMarker = (markerIndex: number) => {
     const binFull = document.createElement('img');
     binFull.src = bin_full;
@@ -78,6 +78,7 @@ export const useMarker = (): useMarkerProps => {
     
     markers[markerIndex].content = binFullGlyph.element;
   }
+  */
 
-  return { createMarker, updateMarker, markers }
+  return { createMarker, markers }
 }
