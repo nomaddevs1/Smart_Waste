@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ) => {
     sendSignInLinkToEmail(auth1, email, {
       // this is the URL that we will redirect back to after clicking on the link in mailbox
-      url: "http://localhost:3000/roles",
+      url: "http://localhost:3000/dashboard",
       handleCodeInApp: true,
     })
       .then(() => {
