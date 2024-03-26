@@ -9,7 +9,6 @@ import { useAuth } from "./context/UserAuthContext";
 import NotFound from "./pages/404";
 import Map from "./pages/Map";
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
-import Marker from "./component/Marker";
 import { MapProvider } from "./context/MapContext";
 
 function App() {
@@ -32,18 +31,19 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/map" element={
-          <Wrapper render={render} apiKey={mapKey}>
+          <ProtectedRoute>
+          <Wrapper render={render} apiKey={mapKey} libraries={["marker"]}>
             <MapProvider>
               <Map />
-              <Marker />
             </MapProvider>
           </Wrapper>
+          </ProtectedRoute>
         } />
         <Route path="/roles" element={
           <ProtectedRoute>
             <Role />
           </ProtectedRoute>} />
-                {/* Redirect unauthenticated users to /login, and authenticated users to /dashboard */}
+        {/* Redirect unauthenticated users to /login, and authenticated users to /dashboard */}
         <Route path="/" element={isAuthenticated ? <Navigate replace to="/dashboard" /> : <Navigate replace to="/login" />} />
         {/* Catch-all route */}
         <Route path="*" element={<NotFound/>} />

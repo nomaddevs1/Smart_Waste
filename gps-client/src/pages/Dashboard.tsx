@@ -20,21 +20,21 @@ const Dashboard = () => {
   const {user} = useAuth()!
   const [viewAllBoards, setViewAllBoards] = useState(false);
 
-useEffect(() => {
-  if (user) {
-    const fetchBoards = async () => {
-      try {
-        const data = await FirestoreService.getAllBoardsForOrg(user.uid);
-        const flattenedData = data.flat();
-        setBoard(flattenedData);
-      } catch (error) {
-        console.error("Error fetching boards:", error);
-      }
-    };
+  useEffect(() => {
+    if (user) {
+      const fetchBoards = async () => {
+        try {
+          const data = await FirestoreService.getAllBoardsForOrg(user.uid);
+          const flattenedData = data.flat();
+          setBoard(flattenedData);
+        } catch (error) {
+          console.error("Error fetching boards:", error);
+        }
+      };
 
-    fetchBoards();
-  }
-}, [user])
+      fetchBoards();
+    }
+  }, [user])
   
   useEffect(() => {
     FirestoreService.listenForBoardUpdates(user!.uid, (data) => {
