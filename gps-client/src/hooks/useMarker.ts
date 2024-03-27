@@ -17,14 +17,14 @@ export const useMarker = (): useMarkerProps => {
 
   const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => {
     const binSvg = document.createElement('img');
-    binSvg.src = binStatus === "full" ? bin_empty : bin_full;
+    binSvg.src = binStatus === "full" ? bin_empty : bin_full ;
     binSvg.style.width = '20px';
     binSvg.style.height = '20px';
 
     const binGlyph = new google.maps.marker.PinElement({
       glyph: binSvg,
       scale: 1.2,
-      background: binStatus === "full" ? '#37a132' : '#ba423c',
+      background: binStatus === "full" ?  '#ba423c' : '#37a132',
       borderColor: binStatus === "full" ? '#1d571a': '#591e1b',
     });
 

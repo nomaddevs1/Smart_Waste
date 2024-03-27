@@ -7,40 +7,18 @@ import {
 } from "@chakra-ui/react";
 import { WifiMedium } from "@phosphor-icons/react";
 import WifiSetupModal from "../component/WifiSetupModal";
-import FirestoreService from "../db/db";
-import { useAuth } from "../context/UserAuthContext";
-import { DocumentData } from "firebase/firestore";
+
+// import { useAuth } from "../context/UserAuthContext";
+
 import Cards from "../component/Card";
 import AllBoards from "../component/AllBoards";
+import { useBoardContext } from "../context/BoardContext";
 
 const Dashboard = () => {
   const [selectedBoard] = useState<string | null>(null);
-  const [boards, setBoard] = useState<[] | DocumentData[]>([]);
+  const {boards} = useBoardContext()
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {user} = useAuth()!
   const [viewAllBoards, setViewAllBoards] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      const fetchBoards = async () => {
-        try {
-          const data = await FirestoreService.getAllBoardsForOrg(user.uid);
-          const flattenedData = data.flat();
-          setBoard(flattenedData);
-        } catch (error) {
-          console.error("Error fetching boards:", error);
-        }
-      };
-
-      fetchBoards();
-    }
-  }, [user])
-  
-  useEffect(() => {
-    FirestoreService.listenForBoardUpdates(user!.uid, (data) => {
-      setBoard(data)
-    })
-  }, [])
 
   const openModal = () => {
     onOpen();
@@ -49,7 +27,6 @@ const Dashboard = () => {
   const toggleAllBoards = () => {
     setViewAllBoards(!viewAllBoards);
   }
-
   return (
     <Flex
       width="100wh"
