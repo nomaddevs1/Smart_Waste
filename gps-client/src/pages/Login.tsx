@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Flex,
   Heading,
@@ -12,79 +12,69 @@ import {
   Link,
   Avatar,
   FormControl,
-  IconButton,
+  Text,
+  useToast,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/UserAuthContext";
-import { useLocation, useNavigate } from "react-router-dom";
-import  data from "../auth/firebase";
-import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
-import { useFirstTimeLoginCheck } from "../hooks/useFirstTimeLoginCheck";
-import { GoogleLogo } from "@phosphor-icons/react";
+import { useNavigate } from "react-router-dom";
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 const LoginPane = () => {
-  const { signInWithEmail: sign , signInWithGoogle, user } = useAuth()!;
-  const [email, setEmail] = useState<string>("");
-  const [isDisabled, setDisabled] = useState<boolean>(true);
-  const isFirstTime = useFirstTimeLoginCheck()
+  const { signInWithGoogle,signUpWithEmailAndPassword, signInWithEmailAndPasswordFunc, user } = useAuth()!;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [signUpToggle, setSignUpToggle] = useState(false);
+  const toast = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { search } = location;
-  const { auth } = data
-  
-  const routes = isFirstTime ? "/roles" : "/dashboard"
-    useEffect(()=>{
-      if (user) { 
-  
-      navigate(routes);
-    }
-    else{
-      // user is not signed in but the link is valid
-      if(isSignInWithEmailLink(auth, window.location.href)){
-        // now in case user clicks the email link on a different device, we will ask for email confirmation
-        let email = localStorage.getItem('email');
-        if(!email){
-          email = window.prompt('Please provide your email');
-        }
-        // after that we will complete the login process
-        //@ts-ignore
-        signInWithEmailLink(auth, localStorage.getItem('email'), window.location.href)
-        .then((result)=>{
-          localStorage.removeItem('email');
-          navigate('/roles');
-        }).catch((err: {message: string})=>{
-          navigate('/login');
-        })
-      }
-      
-    }
-  },[user, search, navigate, auth, routes]);
 
-  const handleSendLink = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard"); // Adjust the redirect as needed
+    }
+  }, [user, navigate]);
+
+  const handleEmailPasswordSignUp = async (e: any) => {
     e.preventDefault();
-    sign(email, window.location.href);
+    if (!email || !password) {
+      toast({
+        title: "Please enter both email and password.",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    } else if (password != confirmPassword) { 
+       toast({
+        title: "Password and confirm password not matching",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+       });
+      return;
+    }
+    await signUpWithEmailAndPassword(email, password);
+  }
+
+  const handleEmailPasswordSignIn = async (e: any) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast({
+        title: "Please enter both email and password.",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
+    }
+    await signInWithEmailAndPasswordFunc(email, password);
   };
 
-  const handleGoogleSign = (
-    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    event.preventDefault();
-    signInWithGoogle();
-  };
-
-  const validateEmail = (email: string) => {
-    //@ts-ignore
-    const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return regex.test(email);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-    setDisabled(!validateEmail(e.target.value));
+  const handleGoogleSignIn = async (e: any) => {
+    e.preventDefault();
+    await signInWithGoogle();
   };
 
   return (
@@ -102,16 +92,16 @@ const LoginPane = () => {
         alignItems="center"
       >
         <Avatar bg="teal.500" />
-        <Heading color="teal.400">Welcome</Heading>
+        <Heading color="teal.400">Welcome Back</Heading>
         <Box minW={{ base: "90%", md: "468px" }}>
-          <form>
+          <form onSubmit={signUpToggle ?handleEmailPasswordSignIn : handleEmailPasswordSignUp}>
             <Stack
               spacing={4}
               p="1rem"
               backgroundColor="blue.900"
               boxShadow="md"
             >
-              <FormControl>
+              <FormControl isRequired>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents="none"
@@ -120,40 +110,64 @@ const LoginPane = () => {
                   <Input
                     type="email"
                     placeholder="email address"
-                    onChange={handleChange}
-                    color={"black"}
+                    onChange={(e) => setEmail(e.target.value)}
+                    color={"white"}
                   />
                 </InputGroup>
               </FormControl>
-              <FormControl>
+              <FormControl isRequired>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents="none"
-                    color="gray.300"
-                    children={<CFaLock color="black" />}
+                    children={<CFaLock color="gray.300" />}
+                  />
+                  <Input
+                    type="password"
+                    placeholder="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    color={"white"}
                   />
                 </InputGroup>
               </FormControl>
+              {
+                signUpToggle ? <> </> : <FormControl isRequired>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={<CFaLock color="gray.300" />}
+                  />
+                  <Input
+                    type="password"
+                    placeholder="confirm password"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    color={"white"}
+                  />
+                </InputGroup>
+              </FormControl>
+              }
               <Button
                 borderRadius={0}
                 type="submit"
                 variant="solid"
                 colorScheme="teal"
                 width="full"
-                onClick={(e) => handleSendLink(e)}
-                isDisabled={isDisabled}
+                disabled={password !== confirmPassword}
               >
-                Sign In With Link
+                {signUpToggle ? "Sign In" : "Sign Up"}
               </Button>
+              <Link color="teal.500" onClick={handleGoogleSignIn}>
+                Sign In with Google
+              </Link>
+              <Text cursor="pointer" color="teal.300" onClick={() => navigate("/forgot-password")}>
+                Forgot Password?
+              </Text>
+              <Text cursor="pointer" color="teal.300" onClick={() => setSignUpToggle(!signUpToggle)}>
+               {signUpToggle ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+              </Text>
             </Stack>
           </form>
         </Box>
       </Stack>
-      <Box>
-        <Link color="teal.500" onClick={(e) => handleGoogleSign(e)}>
-          Sign In with <IconButton icon={<GoogleLogo size={32} color="#3b8791" weight="fill" />} aria-label="google" background={"transparent"}/>
-        </Link>
-      </Box>
     </Flex>
   );
 };

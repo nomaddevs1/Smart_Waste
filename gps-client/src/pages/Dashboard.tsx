@@ -27,9 +27,6 @@ const Dashboard = () => {
   const toggleAllBoards = () => {
     setViewAllBoards(!viewAllBoards);
   }
-  useEffect(() => {
-    console.log(boards)
-  }, [boards])
   return (
     <Flex
       width="100wh"

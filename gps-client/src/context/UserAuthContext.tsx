@@ -3,9 +3,13 @@ import data from "../auth/firebase";
 import {
   UserCredential,
   User,
-  sendSignInLinkToEmail,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  linkWithCredential,
 } from "firebase/auth";
 import { useToast } from "@chakra-ui/react";
 
@@ -16,8 +20,10 @@ interface AuthProviderProps {
 export interface UserContextState {
   isAuthenticated: boolean;
   isLoading: boolean;
-  signInWithEmail: (email: string, emailLink: string) => void;
   signInWithGoogle: () => void;
+  signInWithEmailAndPasswordFunc: (email: string, password: string) => Promise<void>;
+  signUpWithEmailAndPassword: (email: string, password: string) => Promise<void>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
   user: User | null;
 }
 
@@ -55,39 +61,109 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return null;
     }
   };
-  const signInWithEmailLinkFunc = async (
-    email: string,
-  ) => {
-    sendSignInLinkToEmail(auth1, email, {
-      // this is the URL that we will redirect back to after clicking on the link in mailbox
-      url: "http://localhost:3000/dashboard",
-      handleCodeInApp: true,
-    })
-      .then(() => {
-        localStorage.setItem("email", email);
-        toast({
-          title: "Success",
-          description: "Email sent successfully",
-          status: "success",
-          isClosable: true,
+  const signInWithEmailAndPasswordFunc = async (email: string, password: string): Promise<void> => {
+    try {
+      const result = await signInWithEmailAndPassword(auth1, email, password);
+      setUser(result.user);
+    } catch (error) {
+      console.error("Error signing in with email and password", error);
+      toast({
+        title: "Error",
+        description: "Failed to sign in. Please check your credentials.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const sendPasswordResetEmailFunc = async (email: string): Promise<void> => {
+    try {
+      await sendPasswordResetEmail(auth1, email);
+      toast({
+        title: "Success",
+        description: "Password reset email sent successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error sending password reset email", error);
+      toast({
+        title: "Error",
+        description: "Failed to send password reset email.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+ const signUpWithEmailAndPassword = async (email: string, password: string): Promise<void> => {
+  try {
+    const result = await createUserWithEmailAndPassword(auth1, email, password);
+    setUser(result.user);
+    toast({
+      title: "Account created",
+      description: "Your account has been successfully created.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+  } catch (error: any) {
+    if (error.code === 'auth/email-already-in-use') {
+      // Email already used with another auth method. Attempt to link accounts.
+      const credential = EmailAuthProvider.credential(email, password);
+      signInWithPopup(auth1, new GoogleAuthProvider()).then((googleResult) => {
+        linkWithCredential(googleResult.user, credential).then((usercred) => {
+          toast({
+            title: "Accounts Linked",
+            description: "Your email/password is now linked to your Google account.",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+        }).catch((linkError: any) => {
+          console.error("Error linking accounts", linkError);
+          toast({
+            title: "Error Linking Accounts",
+            description: linkError.message,
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
         });
-      })
-      .catch((err) => {
+      }).catch((signInError) => {
+        console.error("Error signing in with Google", signInError);
         toast({
-          title: "Error",
-          description: "Email failed to send. You can use the sign in with google.",
+          title: "Sign-In Error",
+          description: signInError.message,
           status: "error",
+          duration: 9000,
           isClosable: true,
         });
       });
-  };
+    } else {
+      console.error("Error creating user with email and password", error);
+      toast({
+        title: "Error creating account",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  }
+};
+
 
   const contextValue = {
     isAuthenticated: !!user,
     isLoading,
     user,
-    signInWithEmail: signInWithEmailLinkFunc,
     signInWithGoogle,
+    signInWithEmailAndPasswordFunc,
+    signUpWithEmailAndPassword,
+    sendPasswordResetEmail: sendPasswordResetEmailFunc,
   };
 
   return (
