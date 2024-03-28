@@ -18,6 +18,7 @@ import {
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useAuth } from "../context/UserAuthContext";
 import { useNavigate } from "react-router-dom";
+import { useFirstTimeLoginCheck } from "../hooks/useFirstTimeLoginCheck";
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
@@ -26,15 +27,17 @@ const LoginPane = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const isFirstTime = useFirstTimeLoginCheck()
   const [signUpToggle, setSignUpToggle] = useState(false);
+  const routes = isFirstTime ? "/roles" : "/dashboard";
   const toast = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard"); // Adjust the redirect as needed
+      navigate(routes);
     }
-  }, [user, navigate]);
+  }, [user, navigate, routes]);
 
   const handleEmailPasswordSignUp = async (e: any) => {
     e.preventDefault();

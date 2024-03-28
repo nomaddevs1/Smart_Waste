@@ -149,28 +149,31 @@ const FirestoreService = {
     userId: string,
     onUpdate: (boards: DocumentData[]) => void
   ) => {
-    const user = await FirestoreService.getUser(userId);
-    const que = user!.role === "organization" ? "orgId" : "clientId";
-    const id = user!.role === "organization" ? user!.orgId : userId;
-    const boardsRef = collection(db, "boards");
-    const q = query(boardsRef, where(que, "==", id)); // Adjust "orgId" to "userId" if needed
+    
+      const user = await FirestoreService.getUser(userId);
+      const que = user!.role === "organization" ? "orgId" : "clientId";
+      const id = user!.role === "organization" ? user!.orgId : userId;
+      const boardsRef = collection(db, "boards");
+      const q = query(boardsRef, where(que, "==", id)); // Adjust "orgId" to "userId" if needed
 
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const boardsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        onUpdate(boardsData);
-      },
-      (error) => {
-        console.error("Error listening to boards updates:", error);
-      }
-    );
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const boardsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          onUpdate(boardsData);
+        },
+        (error) => {
+          console.error("Error listening to boards updates:", error);
+        }
 
-    // Return the unsubscribe function so it can be called to stop listening for updates
-    return unsubscribe;
+      );
+
+      // Return the unsubscribe function so it can be called to stop listening for updates
+      return unsubscribe;
+   
   },
 
   getOrg: async (

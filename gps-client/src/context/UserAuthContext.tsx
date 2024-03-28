@@ -99,7 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
  const signUpWithEmailAndPassword = async (email: string, password: string): Promise<void> => {
-  try {
+   try {
     const result = await createUserWithEmailAndPassword(auth1, email, password);
     setUser(result.user);
     toast({

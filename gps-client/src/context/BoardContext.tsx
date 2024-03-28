@@ -10,18 +10,20 @@ interface BoardContextProps {
 
 const BoardContext = createContext<BoardContextProps | null>(null);
 
-export const BoardProvider: React.FC<{children: React.ReactNode;}> = ({ children }) => {
+export const BoardProvider: React.FC<{children: React.ReactNode;}> =  ({ children }) => {
   const { user } = useAuth()!;
   const [boards, setBoards] = useState<DocumentData[] | []>([]);
-
+  
   useEffect(() => {
-    let unsubscribeFn = () => {};
-
+    let unsubscribeFn = () => { };
+  
     if (user) {
       const setupBoardListener = async () => {
-        unsubscribeFn = await FirestoreService.listenForBoardUpdates(user.uid, (data) => {
-          setBoards(data);
-        });
+        try {
+          unsubscribeFn = await FirestoreService.listenForBoardUpdates(user.uid, (data) => {
+            setBoards(data);
+          });
+        } catch (err) { }
       };
 
       setupBoardListener();
