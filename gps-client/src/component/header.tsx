@@ -4,7 +4,6 @@ import data from "../auth/firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserAuthContext";
 import { Logo } from "./Logo";
-import { MenuItem } from "./MenuItem";
 
 
 function Header() {
@@ -37,13 +36,13 @@ function Header() {
         direction="row"
         display={{ base: "none", md: "flex" }}
       >
-        {user?.isAuthenticated && (
+       
           <>
             <Button as={Link} to="/dashboard" variant="link" color="white">Dashboard</Button>
-            <Button as={Link} to="/map" variant="link" color="white">Map</Button>
-            <Button colorScheme='red' size='xs' onClick={handleSignOut}>Sign Out</Button>
+            <Button as={Link} to="/" variant="link" color="white">Map</Button>
+            {user?.isAuthenticated ?<Button colorScheme='red' size='xs' onClick={handleSignOut}>Sign Out</Button>: <Button as={Link} to="/login" colorScheme="teal" color="white">Login/Signup</Button>}
           </>
-        )}
+    
       </Stack>
 
       {/* Hamburger menu for smaller screens */}
@@ -61,12 +60,15 @@ function Header() {
           <ChakraMenuItem icon={<AddIcon />} as={Link} to="/dashboard">
             Dashboard
           </ChakraMenuItem>
-          <ChakraMenuItem icon={<ExternalLinkIcon />} as={Link} to="/map">
+          <ChakraMenuItem icon={<ExternalLinkIcon />} as={Link} to="/">
             Map
           </ChakraMenuItem>
-          <ChakraMenuItem icon={<AddIcon />} onClick={handleSignOut}>
+          {user?.isAuthenticated ? <ChakraMenuItem icon={<AddIcon />} onClick={handleSignOut}>
             Sign Out
+          </ChakraMenuItem> : <ChakraMenuItem icon={<ExternalLinkIcon />} as={Link} to="/login">
+            Login/Signup
           </ChakraMenuItem>
+}
         </MenuList>
       </Menu>
     </Flex>

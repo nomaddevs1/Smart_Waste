@@ -30,14 +30,12 @@ function App() {
             <Dashboard />
           </ProtectedRoute>
         } />
-        <Route path="/map" element={
-          <ProtectedRoute>
+        <Route path="/" element={
           <Wrapper render={render} apiKey={mapKey} libraries={["marker"]}>
             <MapProvider>
               <Map />
             </MapProvider>
           </Wrapper>
-          </ProtectedRoute>
         } />
         <Route path="/roles" element={
           <ProtectedRoute>

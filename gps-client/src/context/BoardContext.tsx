@@ -15,19 +15,20 @@ export const BoardProvider: React.FC<{children: React.ReactNode;}> =  ({ childre
   const [boards, setBoards] = useState<DocumentData[] | []>([]);
   
   useEffect(() => {
+    if(user){
     let unsubscribeFn = () => { };
-  
-    if (user) {
+    
       const setupBoardListener = async () => {
         try {
-          unsubscribeFn = await FirestoreService.listenForBoardUpdates(user.uid, (data) => {
+          unsubscribeFn = await FirestoreService.listenForBoardUpdates(user!.uid, (data) => {
             setBoards(data);
           });
+          console.log(boards)
         } catch (err) { }
       };
 
       setupBoardListener();
-    }
+ 
 
     // Cleanup function
     return () => {
@@ -35,6 +36,17 @@ export const BoardProvider: React.FC<{children: React.ReactNode;}> =  ({ childre
         unsubscribeFn();
       }
     };
+  }else{
+    const fetchBoards = async () => {
+      try {
+        const boardsData = await FirestoreService.fetchAllBoards();
+        setBoards(boardsData);
+      } catch (err) {
+        console.error("Failed to fetch boards", err);
+      }
+    };
+    fetchBoards();
+  }
   }, [user]);
 
   return <BoardContext.Provider value={{ boards }}>{children}</BoardContext.Provider>;

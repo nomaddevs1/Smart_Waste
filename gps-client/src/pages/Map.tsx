@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useMapContext } from "../context/MapContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useBoardContext } from "../context/BoardContext";
@@ -16,14 +16,12 @@ function Map() {
   }
 useEffect(() => {
     boards.forEach(board => {
+      if(board.lat && board.lng){
        createMarker({ lat:parseFloat(board.lat), lng: parseFloat(board.lng)}, board.serialNumber, board.status)
-    })
+      }
+      })
   })
- 
-  // const addMarker = () => {
-  //   createMarker({ lat: 33.2106633, lng: -97.1498416 }, "ABC", "full")
-  //   createMarker({ lat: 33.252807, lng: -97.152697 }, "XYZ", "empty")
-  // }
+
 
   return (
     <>
