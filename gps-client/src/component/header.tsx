@@ -65,7 +65,7 @@ function Header() {
           </ChakraMenuItem>
           {user?.isAuthenticated ? <ChakraMenuItem icon={<AddIcon />} onClick={handleSignOut}>
             Sign Out
-          </ChakraMenuItem> : <ChakraMenuItem icon={<ExternalLinkIcon />} as={Link} to="/">
+          </ChakraMenuItem> : <ChakraMenuItem icon={<ExternalLinkIcon />} as={Link} to="/login">
             Login/Signup
           </ChakraMenuItem>
 }
