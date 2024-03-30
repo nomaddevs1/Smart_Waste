@@ -149,13 +149,13 @@ const FirestoreService = {
     userId: string,
     onUpdate: (boards: DocumentData[]) => void
   ) => {
-    
-      const user = await FirestoreService.getUser(userId);
+    const user = await FirestoreService.getUser(userId);
+   
       const que = user!.role === "organization" ? "orgId" : "clientId";
       const id = user!.role === "organization" ? user!.orgId : userId;
       const boardsRef = collection(db, "boards");
-      const q = query(boardsRef, where(que, "==", id)); // Adjust "orgId" to "userId" if needed
-
+      let q = query(boardsRef, where(que, "==", id));
+      
       const unsubscribe = onSnapshot(
         q,
         (snapshot) => {
@@ -168,13 +168,26 @@ const FirestoreService = {
         (error) => {
           console.error("Error listening to boards updates:", error);
         }
-
-      );
-
-      // Return the unsubscribe function so it can be called to stop listening for updates
-      return unsubscribe;
-   
+        );
+        return unsubscribe;
+       
   },
+
+  fetchAllBoards : async ()=>  {
+    try {
+      const boardsRef = collection(db, "boards");
+      const querySnapshot = await getDocs(boardsRef);
+      const boards = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return boards;
+    } catch (error) {
+      console.error("Error fetching boards:", error);
+      return []; // Return an empty array in case of an error
+    }
+  },
+  
 
   getOrg: async (
     userId: string,
