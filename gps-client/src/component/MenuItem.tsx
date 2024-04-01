@@ -9,7 +9,6 @@ interface MenuItemProps extends TextProps {
 }
 
 export const MenuItem = ({ children, to, ...rest }: MenuItemProps) => {
-  // Conditionally render as a Link or Text based on the presence of 'to'
   if (to) {
     return (
       <Link to={to}>
