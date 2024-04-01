@@ -10,7 +10,7 @@ extern void initializeBLE();
 WiFiSSLClient client;
 const char HOST_NAME[] = "smartwaste.onrender.com";
 const int HTTP_PORT = 443;
-const String PATH_NAME = "/api";
+const String PATH_NAME = "/api/boards/update-location";
 const String HTTP_METHOD = "POST";
 
 int status = WL_IDLE_STATUS;

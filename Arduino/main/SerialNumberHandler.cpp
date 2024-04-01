@@ -2,10 +2,9 @@
 
 // Initialize the BLE Characteristic for Serial Number
 
-void initializeSerialNumberCharacteristic() {
+void initializeSerialNumberCharacteristic(String &serialNumber) {
     // Check EEPROM for existing serial number and initialize characteristic
     Serial.println("Serials");
-    String serialNumber = "";
     for (int i = 0; i < 512; ++i) {
         char c = EEPROM.read(i);
         if (c == '\0') break;
