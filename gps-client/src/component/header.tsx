@@ -4,12 +4,15 @@ import data from "../auth/firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/UserAuthContext";
 import { Logo } from "./Logo";
+import { useGeolocation } from '../hooks/useGeolocation';
+import { useEffect } from 'react';
 
 
 function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const user = useAuth();
+  const { userLocation, getUserLocation } = useGeolocation()
   const handleSignOut = async () => {
     await data.auth.signOut();
     navigate('/login');
@@ -45,7 +48,6 @@ function Header() {
     
       </Stack>
 
-      {/* Hamburger menu for smaller screens */}
       <Menu isOpen={isOpen} onClose={onClose}>
         <MenuButton 
           as={IconButton} 

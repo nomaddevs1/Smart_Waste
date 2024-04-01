@@ -4,7 +4,8 @@ export const updateBoardLocation = async (serialNumber: string, lat: string, lng
   const boardDocRef = db.collection('boards').doc(serialNumber);
   await boardDocRef.update({
     lat: lat,
-    lng: lng
+    lng: lng,
+    status: "full"
   });
 
 };
