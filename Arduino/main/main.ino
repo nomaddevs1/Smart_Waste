@@ -92,8 +92,7 @@ void loop()
     readGPS(latitude, longitude);
     if (gnggaCaptured)
       {
-          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + ", \"serialNumber\": \"" + serialNumber + "\"}";
-          Serial.println(jsonData);
+          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lng\": " + String(longitude, 6) + ", \"serialNumber\": \"" + serialNumber + "\"}";
       }
   }
   

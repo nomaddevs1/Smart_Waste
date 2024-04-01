@@ -32,7 +32,4 @@ void serialNumberCharacteristicWritten(BLEDevice central, BLECharacteristic char
     #if defined(ESP8266) || defined(ESP32)
     EEPROM.commit();
     #endif
-
-    // Confirm to the frontend
-    serialNumberCharacteristic.writeValue("Serial Number Updated");
 }
