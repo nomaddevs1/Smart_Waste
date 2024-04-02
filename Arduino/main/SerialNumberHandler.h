@@ -10,7 +10,7 @@
 extern BLECharacteristic serialNumberCharacteristic;
 
 // Function prototypes
-void initializeSerialNumberCharacteristic();
+void initializeSerialNumberCharacteristic(String &serialNumber);
 void serialNumberCharacteristicWritten(BLEDevice central, BLECharacteristic characteristic);
 
 #endif

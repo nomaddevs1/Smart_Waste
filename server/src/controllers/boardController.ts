@@ -3,7 +3,7 @@ import  {updateBoardLocation}  from "../services/boardServices"; // Assuming you
 
 export const updateBoardLocationController = async (req: Request, res: Response) => {
   const { lat, lng, serialNumber } = req.body;
-
+  console.log(req.body)
   try {
     await updateBoardLocation(serialNumber, lat, lng);
     res.status(200).send({ message: "Board location updated successfully" });
