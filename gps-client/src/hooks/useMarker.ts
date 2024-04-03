@@ -17,7 +17,7 @@ export const useMarker = (): useMarkerProps => {
 
   const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => {
     const binSvg = document.createElement('img');
-    binSvg.src = binStatus === "full" ? bin_empty : bin_full ;
+    binSvg.src = binStatus === "full" ? bin_full : bin_empty ;
     binSvg.style.width = '20px';
     binSvg.style.height = '20px';
 
@@ -25,7 +25,7 @@ export const useMarker = (): useMarkerProps => {
       glyph: binSvg,
       scale: 1.2,
       background: binStatus === "full" ?  '#ba423c' : '#37a132',
-      borderColor: binStatus === "full" ? '#1d571a': '#591e1b',
+      borderColor: binStatus === "full" ? '#591e1b': '#1d571a',
     });
 
     const getRoute = () => {
@@ -37,9 +37,16 @@ export const useMarker = (): useMarkerProps => {
     }
 
     const infowindow = new google.maps.InfoWindow();
-    const info = document.createElement('button');
-    info.textContent = 'Get Route';
-    info.onclick = () => {getRoute()};
+    const info = document.createElement('div');
+    const infoSN = document.createElement('p');
+    infoSN.textContent = `SN: ${boardSerial}`;
+
+    const routeButton = document.createElement('button');
+    routeButton.textContent = 'Get Route';
+    routeButton.onclick = () => {getRoute()};
+
+    info.appendChild(infoSN);
+    info.appendChild(routeButton);
 
     if (map){
       const newMarker = new google.maps.marker.AdvancedMarkerElement({
