@@ -30,10 +30,10 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
               borderRadius="lg"
             />
             <Stack mt="6" spacing="3">
-              <Heading size="md">Smart Waste 1</Heading>
-              <Text>
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint amet odit omnis qui necessitatibus non sequi at numquam, ipsum voluptatem quia dignissimos obcaecati assumenda molestias doloremque magni illum dolorem! Architecto.                         
-              </Text>
+              <Heading size="md">Board {i}</Heading>
+              <Text>Board Status: {board.Status}</Text>
+              <Text>Serial Number: {board.serialNumber}</Text>
+              <Text>Location: {board.location}</Text>
             </Stack>
           </CardBody>
           <Divider />
