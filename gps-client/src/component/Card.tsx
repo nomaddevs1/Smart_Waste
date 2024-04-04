@@ -12,12 +12,12 @@ import {
   Box,
   Input,
 } from "@chakra-ui/react";
-import { DocumentData } from "firebase/firestore";
+import { useBoardContext } from "../context/BoardContext";
 import { PencilSimpleLine } from "@phosphor-icons/react";
 import FirestoreService from "../db/db";
 import React, { useState } from "react";
 
-const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
+const Cards = () => { const {boards} = useBoardContext()};
   const [changingName, setChangingName] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
 
@@ -53,7 +53,11 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
   }
   
   return (
-    <Flex flexWrap={"wrap"} margin={2}>
+    <Flex
+      flexWrap={"wrap"}
+      margin={2}
+      
+    >
       {boards.map((board, i) => (
         <Card maxW="sm" key={i} margin={5}>
           <CardBody>

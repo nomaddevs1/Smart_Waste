@@ -20,6 +20,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useBLEConnection } from "../hooks/useBLEConnection";
 import FirestoreService from "../db/db";
 import { useAuth } from "../context/UserAuthContext";
+import { useGeolocation } from "../hooks/useGeolocation";
 
 interface WifiSetupModalProps {
   isOpen: boolean;
@@ -34,36 +35,38 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
   const [ssid, setSsid] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const toast = useToast();
+  const { userLocation} = useGeolocation()
   const { connectToBLEDevice } = useBLEConnection(toast);
   const { user } = useAuth()!;
   const modalBackground = useColorModeValue("white", "gray.700");
   const inputBorderColor = useColorModeValue("gray.300", "gray.600");
   const buttonHoverBg = useColorModeValue("blue.600", "blue.300");
-
+  
   const handleSubmit = async () => {
+    let lat = userLocation!.lat.toString()
+    let lng = userLocation!.lng.toString()
+    if (!ssid || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter your SSID and password.",
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
+    onClose();
+    
+    let serialNumber = await connectToBLEDevice(ssid, password);
     try {
-      if (!ssid || !password) {
-        toast({
-          title: "Error",
-          description: "Please enter your SSID and password.",
-          status: "error",
-          isClosable: true,
-        });
-        return;
-      }
-      onClose();
-
-      let serialNumber = await connectToBLEDevice(ssid, password);
-
-      await FirestoreService.addBoard(serialNumber!, user?.uid!);
+      await FirestoreService.addBoard(serialNumber!, user!.uid!,lat, lng);
       toast({
         title: "New Board detected",
         description: "Board added",
         status: "success",
         isClosable: true,
-      });
-    
+      }); 
   }catch (e:any) {
+    await FirestoreService.updateBoard(serialNumber!,user!.uid, {lat, lng})
       toast({
         title: "Board Already exists",
         description: e.message,

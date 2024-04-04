@@ -21,7 +21,7 @@ function App() {
   };
 
   return (
-    <Flex height="100vh" flexDirection="column" overflowY={'hidden'} >
+    <Flex height="100vh" flexDirection="column" overflowY={'hidden'} overflowX={'hidden'} >
       <Header/>
       <Routes>
         <Route path="/login"  element={<LoginPane/>} />

@@ -9,6 +9,7 @@ const AllBoards = () => {
     const fetchData = async () => {
       try {
         const organizations = await FirestoreService.getAllOrg();
+        console.log(organizations)
         setOrgs(organizations);
       } catch (error) {
         console.error("Error fetching data:", error);

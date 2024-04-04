@@ -5,13 +5,14 @@ import { useBoardContext } from "../context/BoardContext";
 import { useMarker } from "../hooks/useMarker";
 import { useEffect } from "react";
 
+
 function Map() {
   const { map, mapRef, directionsRef } = useMapContext();
   const {userLocation} = useGeolocation();
   const { boards } = useBoardContext()!
   const { createMarker } = useMarker();
-
-  if (map && userLocation){
+  
+  if (map && userLocation) {
     map.panTo(userLocation);
   }
   
@@ -20,9 +21,9 @@ function Map() {
       if(board.lat && board.lng){
        createMarker({ lat:parseFloat(board.lat), lng: parseFloat(board.lng)}, board.serialNumber, board.status)
       }
-      })
-  })
-
+    });
+    
+  });
 
   return (
     <Flex height="100%">
