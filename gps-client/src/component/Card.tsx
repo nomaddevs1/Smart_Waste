@@ -17,7 +17,8 @@ import { PencilSimpleLine } from "@phosphor-icons/react";
 import FirestoreService from "../db/db";
 import React, { useState } from "react";
 
-const Cards = () => { const {boards} = useBoardContext()};
+const Cards = () => { 
+  const {boards} = useBoardContext();
   const [changingName, setChangingName] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
 
