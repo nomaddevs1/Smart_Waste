@@ -9,6 +9,7 @@
 String jsonData;
 float latitude, longitude;
 float distance;
+String serialNumber = "";
 float distance2;
 const int trigPin = 9;
 const int trigPin2 = 7;
@@ -61,7 +62,7 @@ void setup()
     // clearEEprom();
     BLE.begin();
     setBLEcharacteristics();
-    initializeSerialNumberCharacteristic();
+    initializeSerialNumberCharacteristic(serialNumber);
     setupGPS();
     pinMode(trigPin, OUTPUT);
     pinMode(trigPin2, OUTPUT);
@@ -91,7 +92,7 @@ void loop()
     readGPS(latitude, longitude);
     if (gnggaCaptured)
       {
-          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lon\": " + String(longitude, 6) + ", \"serialNumber\":" + "}";
+          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lng\": " + String(longitude, 6) + ", \"serialNumber\": \"" + serialNumber + "\"}";
       }
   }
   
