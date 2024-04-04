@@ -24,4 +24,6 @@ export interface Board {
   clientID?: string;
 }
 
-
+export type BoardUpdateChanges = {
+  [key: string]: any;
+};

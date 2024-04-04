@@ -7,16 +7,11 @@ import {
 } from "@chakra-ui/react";
 import { WifiMedium } from "@phosphor-icons/react";
 import WifiSetupModal from "../component/WifiSetupModal";
-
-// import { useAuth } from "../context/UserAuthContext";
-
 import Cards from "../component/Card";
 import AllBoards from "../component/AllBoards";
-import { useBoardContext } from "../context/BoardContext";
 
 const Dashboard = () => {
   const [selectedBoard] = useState<string | null>(null);
-  const {boards} = useBoardContext()
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [viewAllBoards, setViewAllBoards] = useState(false);
 
@@ -33,7 +28,7 @@ const Dashboard = () => {
       marginTop={"100px"}
       overflowY={"auto"}
     >
-      {viewAllBoards ? <AllBoards /> : <Cards boards={boards}/>}
+      {viewAllBoards ? <AllBoards /> : <Cards/>}
 
       <WifiSetupModal
         isOpen={isOpen}

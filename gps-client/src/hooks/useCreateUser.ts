@@ -9,7 +9,7 @@ const useCreateUserRole = () => {
   const { user } = useAuth()!; // Assuming useAuth provides the authenticated user's details
   const toast = useToast()
 
-  const handleSubmit = async (role: string, username: string, orgName?:string) => {
+  const handleSubmit = async (role: string, username: string, orgDetails?:string, ) => {
     if (!user) {
        toast({
         title: "Not Authenticated",
@@ -21,14 +21,17 @@ const useCreateUserRole = () => {
       return;
     }
     try {
+      console.log(role)
       switch (role) {
         case 'organization':
-          await FirestoreService.addOrganization(user.uid, username, user.email!, orgName);
+          await FirestoreService.addOrganization(user.uid, username, user.email!, orgDetails);
+          break;
+        case 'collector':
+          await FirestoreService.addCollector(user.uid, username, orgDetails!);
           break;
         case 'client':
           await FirestoreService.addClient(user.uid, username, user.email!);
           break;
-        // Implement cases for other roles as needed
         default:
           console.error("Invalid role selected");
       }

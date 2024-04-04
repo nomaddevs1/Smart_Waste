@@ -9,6 +9,7 @@ const AllBoards = () => {
     const fetchData = async () => {
       try {
         const organizations = await FirestoreService.getAllOrg();
+        console.log(organizations)
         setOrgs(organizations);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -23,9 +24,9 @@ const AllBoards = () => {
       <Text fontSize="2xl" mb="4">All Organizations</Text>
       {orgs.map((org: any) => (
         <Box ml="2rem" mb="4" key={org.id}>
-          <Text fontSize="lg">{org.data.orgName}</Text>
+          <Text fontSize="lg">{org.orgName}</Text>
           <List ml="1rem">
-            {org.data.boards.map((board: any) => (
+            {org.boards.map((board: any) => (
               <ListItem key={board}>Serial Number: {board}</ListItem>
             ))}
           </List>

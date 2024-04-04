@@ -11,15 +11,15 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { DocumentData } from "firebase/firestore";
+import { useBoardContext } from "../context/BoardContext";
 
-const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
+const Cards = () => {
+  const {boards} = useBoardContext();
 
   return (
     <Flex
       flexWrap={"wrap"}
       margin={2}
-      
     >
       {boards.map((board, i) => (
         <Card maxW="sm" key={i} margin={5}>
