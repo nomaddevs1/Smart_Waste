@@ -12,9 +12,12 @@ import {
   where,
   getDocs,
   onSnapshot,
+  runTransaction,
 } from "firebase/firestore";
 import data from "../auth/firebase";
+import { BoardUpdateChanges } from "../types/types";
 const { db } = data;
+
 
 const FirestoreService = {
   addOrganization: async (
@@ -62,7 +65,22 @@ const FirestoreService = {
       { merge: true }
     );
   },
-
+  addCollector: async (
+    userId: string,
+    name: string,
+    orgId: string
+  ): Promise<void> => {
+    try {
+      await setDoc(doc(db, "users", userId), {
+        name,
+        role: "collector",
+        orgId: orgId,
+        boardAssigned: [],
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
   getUser: async (userId: string): Promise<DocumentData | null> => {
     const user = await getDoc(doc(db, "users", userId));
     if (user.exists()) {
@@ -75,7 +93,9 @@ const FirestoreService = {
   addBoard: async (
     serialNumber: string,
     userId: string,
-    status: "empty" | "full" = "empty"
+    lat: string,
+    lng: string,
+    status: "empty" | "full" = "empty",
   ): Promise<string> => {
     try {
       const boardDocRef = doc(db, "boards", serialNumber);
@@ -90,8 +110,8 @@ const FirestoreService = {
         await setDoc(boardDocRef, {
           serialNumber,
           orgId: user.orgId,
-          lat: "",
-          lng: "",
+          lat: lat,
+          lng: lng,
           status,
           clientId: "",
           location: null,
@@ -106,8 +126,7 @@ const FirestoreService = {
         throw new Error("User must be an organization to add a board.");
       }
     } catch (e) {
-      console.error("Failed to add board:", e);
-      throw e; // Rethrow the error for handling elsewhere
+      throw e
     }
   },
 
@@ -145,39 +164,39 @@ const FirestoreService = {
       return [];
     }
   },
+
   listenForBoardUpdates: async (
     userId: string,
     onUpdate: (boards: DocumentData[]) => void
   ) => {
     const user = await FirestoreService.getUser(userId);
-   
-      const que = user!.role === "organization" ? "orgId" : "clientId";
-      const id = user!.role === "organization" ? user!.orgId : userId;
-      const boardsRef = collection(db, "boards");
-      let q = query(boardsRef, where(que, "==", id));
-      
-      const unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          const boardsData = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          onUpdate(boardsData);
-        },
-        (error) => {
-          console.error("Error listening to boards updates:", error);
-        }
-        );
-        return unsubscribe;
-       
+    const que =
+      user!.role === "organization" || "collector" ? "orgId" : "clientId";
+    const id = user!.role === "organization" || "collector"? user!.orgId : userId;
+    const boardsRef = collection(db, "boards");
+    let q = query(boardsRef, where(que, "==", id));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const boardsData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        onUpdate(boardsData);
+      },
+      (error) => {
+        console.error("Error listening to boards updates:", error);
+      }
+    );
+    return unsubscribe;
   },
 
-  fetchAllBoards : async ()=>  {
+  fetchAllBoards: async (userID?: string) => {
     try {
       const boardsRef = collection(db, "boards");
       const querySnapshot = await getDocs(boardsRef);
-      const boards = querySnapshot.docs.map(doc => ({
+      const boards = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -187,6 +206,21 @@ const FirestoreService = {
       return []; // Return an empty array in case of an error
     }
   },
+
+  updateBoard: async (
+    boardId: string,
+    userId: string,
+    changes: BoardUpdateChanges
+  ): Promise<Boolean | undefined> => {
+    const user = await FirestoreService.getUser(userId);
+    if (user && user.role === "collector") {
+      const boardDocRef = doc(db, "boards", boardId);
+      await updateDoc(boardDocRef, changes);
+      return true;
+    }
+    return false; 
+  },
+
   
 
   getOrg: async (
@@ -201,31 +235,40 @@ const FirestoreService = {
     }
   },
 
-  getAllOrg: async (): Promise<DocumentData | undefined> => {
-    const orgList: {id: string, data: any}[] = [];
+
+  getAllOrg: async (): Promise<DocumentData[] | []> => {
+    const orgList: { id: string }[] = [];
     const querySnapshot = await getDocs(collection(db, "organizations"));
     querySnapshot.forEach((doc) => {
       orgList.push({
         id: doc.id,
-        data: doc.data()
+        ...doc.data(),
       });
     });
 
-    return orgList
+    return orgList ? orgList : [];
   },
+
 
   assignBoardToClient: async (
     boardId: string,
     clientId: string
   ): Promise<void> => {
-    const boardDocRef = doc(db, "boards", boardId);
-    await updateDoc(boardDocRef, {
-      clientID: clientId,
-    });
-    const clientDocRef = doc(db, "users", clientId);
-    await updateDoc(clientDocRef, {
-      boards: arrayUnion(boardId),
-    });
+    try {
+      await runTransaction(db, async (transaction) => {
+        const boardRef = doc(db, "boards", boardId);
+        const clientRef = doc(db, "users", clientId);
+
+        const boardSnap = await transaction.get(boardRef);
+        if (!boardSnap.exists()) throw new Error("Board does not exist");
+
+        transaction.update(boardRef, { clientId });
+        transaction.update(clientRef, { boards: arrayUnion(boardId) });
+      });
+    } catch (error: any) {
+      console.error("Transaction failed:", error.message);
+      throw new Error(error.message);
+    }
   },
 
   setUserRole: async (
