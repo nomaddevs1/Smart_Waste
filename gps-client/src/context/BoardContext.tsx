@@ -5,7 +5,6 @@ import { useAuth } from "./UserAuthContext";
 
 interface BoardContextProps {
     boards: DocumentData[] | [];
-    
 }
 
 const BoardContext = createContext<BoardContextProps | null>(null);
@@ -23,7 +22,6 @@ export const BoardProvider: React.FC<{children: React.ReactNode;}> =  ({ childre
           unsubscribeFn = await FirestoreService.listenForBoardUpdates(user!.uid, (data) => {
             setBoards(data);
           });
-          console.log(boards)
         } catch (err) { }
       };
 

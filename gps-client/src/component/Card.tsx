@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonGroup,
   Card,
   CardBody,
   CardFooter,
@@ -10,17 +9,15 @@ import {
   Image,
   Stack,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import { DocumentData } from "firebase/firestore";
+import { PencilSimpleLine } from "@phosphor-icons/react";
 
 const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
-
+  
   return (
-    <Flex
-      flexWrap={"wrap"}
-      margin={2}
-      
-    >
+    <Flex flexWrap={"wrap"} margin={2}>
       {boards.map((board, i) => (
         <Card maxW="sm" key={i} margin={5}>
           <CardBody>
@@ -30,23 +27,17 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
               borderRadius="lg"
             />
             <Stack mt="6" spacing="3">
-              <Heading size="md">Board {i}</Heading>
-              <Text>Board Status: {board.Status}</Text>
-              <Text>Serial Number: {board.serialNumber}</Text>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Heading size="md">Board {i}</Heading>
+                <Button justifySelf="end" variant="link"><PencilSimpleLine/></Button>
+              </Box>
               <Text>Location: {board.location}</Text>
+              <Text>Board Status: {board.status}</Text>
             </Stack>
           </CardBody>
           <Divider />
           <CardFooter>
-            <ButtonGroup spacing="2">
-              {board.clientId === "" ? (
-                <Button variant="solid" colorScheme="blue">
-                  Assign To Client
-                </Button>
-              ) : (
-                <></>
-              )}
-            </ButtonGroup>
+            <Text>Serial Number: {board.serialNumber}</Text>
           </CardFooter>
         </Card>
       ))}

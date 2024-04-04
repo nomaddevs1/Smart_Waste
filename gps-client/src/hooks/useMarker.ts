@@ -3,6 +3,8 @@ import { useDirections } from './useDirections';
 import { useGeolocation } from './useGeolocation';
 import bin_empty from '../assets/bin_empty.svg';
 import bin_full from '../assets/bin_full.svg';
+import { useAuth } from "../context/UserAuthContext";
+import FirestoreService from "../db/db";
 
 interface useMarkerProps {
   createMarker: (position: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => void;
@@ -13,6 +15,7 @@ export const useMarker = (): useMarkerProps => {
   const { map } = useMapContext();
   const { userLocation } = useGeolocation();
   const { calculateRoute } = useDirections();
+  const { isAuthenticated } = useAuth()!;
   let markers: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
   const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => {
@@ -27,6 +30,14 @@ export const useMarker = (): useMarkerProps => {
       background: binStatus === "full" ?  '#ba423c' : '#37a132',
       borderColor: binStatus === "full" ? '#591e1b': '#1d571a',
     });
+
+    const updateStatus = async () => {
+      try {
+        await FirestoreService.resetStatus(boardSerial);
+      } catch (error) {
+        console.error("Failed to update board status", error);
+      }
+    }
 
     const getRoute = () => {
       if (userLocation){
@@ -48,6 +59,13 @@ export const useMarker = (): useMarkerProps => {
     info.appendChild(infoSN);
     info.appendChild(routeButton);
 
+    if (isAuthenticated && binStatus === 'full') {
+      const resetStatus = document.createElement('button');
+      resetStatus.textContent = "Reset Status";
+      resetStatus.onclick = () => {updateStatus()};
+      info.appendChild(resetStatus);
+    }
+
     if (map){
       const newMarker = new google.maps.marker.AdvancedMarkerElement({
         map,
@@ -68,24 +86,6 @@ export const useMarker = (): useMarkerProps => {
       }
     }
   }
-
-  /*
-  const updateMarker = (markerIndex: number) => {
-    const binFull = document.createElement('img');
-    binFull.src = bin_full;
-    binFull.style.width = '20px';
-    binFull.style.height = '20px';
-
-    const binFullGlyph = new google.maps.marker.PinElement({
-      glyph: binFull,
-      scale: 1.2,
-      background: '#ba423c',
-      borderColor: '#591e1b',
-    });
-    
-    markers[markerIndex].content = binFullGlyph.element;
-  }
-  */
 
   return { createMarker, markers }
 }

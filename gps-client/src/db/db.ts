@@ -145,6 +145,7 @@ const FirestoreService = {
       return [];
     }
   },
+
   listenForBoardUpdates: async (
     userId: string,
     onUpdate: (boards: DocumentData[]) => void
@@ -171,6 +172,44 @@ const FirestoreService = {
         );
         return unsubscribe;
        
+  },
+
+  resetStatus : async (serialNumber: string): Promise<void> => {
+    try {
+      const boardDocRef = doc(db, "boards", serialNumber);
+      const querySnapshot = await getDoc(boardDocRef);
+
+      if (!querySnapshot.exists()){
+        throw new Error("Board does not exist");
+      }
+
+      await updateDoc(boardDocRef, {
+        status: "empty"
+      });
+
+    } catch (error) {
+      console.error("Error updating status: ", error);
+      throw error;
+    }
+  },
+
+  setLocation : async (serialNumber: string, newLocation: string): Promise<void> => {
+    try {
+      const boardDocRef = doc(db, "boards", serialNumber);
+      const querySnapshot = await getDoc(boardDocRef);
+
+      if (!querySnapshot.exists()){
+        throw new Error("Board does not exist");
+      }
+
+      await updateDoc(boardDocRef, {
+        location: newLocation
+      });
+
+    } catch (error) {
+      console.error("Error updating location: ", error);
+      throw error;
+    }
   },
 
   fetchAllBoards : async ()=>  {
