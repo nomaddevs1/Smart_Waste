@@ -27,8 +27,8 @@ export const useMarker = (): useMarkerProps => {
     const binGlyph = new google.maps.marker.PinElement({
       glyph: binSvg,
       scale: 1.2,
-      background: binStatus === "full" ?  '#ba423c' : '#37a132',
-      borderColor: binStatus === "full" ? '#591e1b': '#1d571a',
+      background: binStatus === "full" ?  'red.500' : 'green.500',
+      borderColor: binStatus === "full" ? 'red.700' : 'green.700',
     });
 
     const updateStatus = async () => {

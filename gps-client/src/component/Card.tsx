@@ -43,6 +43,14 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
       updateName(boardSerial, newName)
     }
   }
+
+  const updateStatus = async (boardSerial: string) => {
+    try {
+      await FirestoreService.setBoardStatus(boardSerial);
+    } catch (error) {
+      console.error("Failed to update board status", error);
+    }
+  }
   
   return (
     <Flex flexWrap={"wrap"} margin={2}>
@@ -71,13 +79,17 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
                 )}
                 <Button justifySelf="end" variant="link" onClick={() => toggleNameChange(board.serialNumber)}><PencilSimpleLine/></Button>
               </Box>
-              <Text>Location: {board.location}</Text>
-              <Text>Board Status: {board.status}</Text>
+              <Text>Location:     {board.location}</Text>
+              <Box display="flex" alignItems="center">
+                <Text>Bin Status:</Text>
+                <Text ml="4px" color={board.status === "full" ? 'red.500' : 'green.500'}>{board.status}</Text>
+              </Box>
             </Stack>
           </CardBody>
           <Divider />
-          <CardFooter>
-            <Text>Serial Number: {board.serialNumber}</Text>
+          <CardFooter display="flex" alignItems="center" justifyContent="space-between">
+            <Text>{board.serialNumber}</Text>
+            <Button justifySelf="end" onClick={() => updateStatus(board.serialNumber)}>Reset Status</Button>
           </CardFooter>
         </Card>
       ))}
