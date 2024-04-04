@@ -25,11 +25,11 @@ const AllBoards = () => {
       {orgs.map((org: any) => (
         <Card mb="4" key={org.id} width="30rem" borderRadius="10px">
           <CardHeader display="flex" alignItems="center" justifyContent="space-between" bgColor="blue.900" borderTopRadius="5px">
-            <Heading fontSize="lg" color="white">{org.data.orgName}</Heading>
+            <Heading fontSize="lg" color="white">{org.orgName}</Heading>
             <Button colorScheme="teal" color="white" justifySelf="end">Buy Board</Button>
           </CardHeader>
           <Stack ml="1rem" divider={<StackDivider />}>
-            {org.data.boards.map((board: any) => (
+            {org.boards.map((board: any) => (
               <Box p="1rem" key={board}>Serial Number: {board}</Box>
             ))}
           </Stack>
