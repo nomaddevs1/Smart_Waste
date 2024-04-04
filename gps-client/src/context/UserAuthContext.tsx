@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
 
     return unsubscribe;
-  }, [auth1]);
+  }, []);
 
   const signInWithGoogle = async (): Promise<UserCredential | null> => {
     const provider = new GoogleAuthProvider();

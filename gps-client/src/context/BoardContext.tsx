@@ -18,12 +18,14 @@ export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children 
   useEffect(() => {
     if (isLoading) {
       return;
-    }else if (user) {
+    }else{
+      if(user && !isLoading){
+      setBoards([])
       let unsubscribeFn = () => {};
-      
       const setupBoardListener = async () => {
         try {
           unsubscribeFn = await FirestoreService.listenForBoardUpdates(user.uid, (data) => {
+            
             setBoards(data);
           });
         } catch (err) { 
@@ -34,7 +36,7 @@ export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children 
 
       return () => unsubscribeFn();
     } else {
-      const fetchBoards = async () => {
+            const fetchBoards = async () => {
         try {
           const boardsData = await FirestoreService.fetchAllBoards();
           setBoards(boardsData);
@@ -43,6 +45,7 @@ export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children 
         }
       };
       fetchBoards();
+    }
     }
   }, [user, isLoading]);
 
