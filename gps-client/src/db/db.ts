@@ -115,6 +115,7 @@ const FirestoreService = {
           status,
           clientId: "",
           location: null,
+          name: null,
         });
         // Update the organization document to include the new board ID
         const orgRef = doc(db, "organizations", user.orgId);
@@ -190,6 +191,60 @@ const FirestoreService = {
       }
     );
     return unsubscribe;
+  },
+
+  setBoardStatus : async (serialNumber: string): Promise<void> => {
+    try {
+      const boardRef = doc(db, "boards", serialNumber);
+      const querySnapshot = await getDoc(boardRef);
+
+      if (!querySnapshot.exists()){
+        throw new Error("Board does not exist");
+      }
+
+      await updateDoc(boardRef, {
+        status: "empty"
+      });
+
+    } catch (error) {
+      console.error("Error updating status: ", error);
+    }
+  },
+
+  setBoardLocation : async (serialNumber: string, newLocation: string): Promise<void> => {
+    try {
+      const boardRef = doc(db, "boards", serialNumber);
+      const querySnapshot = await getDoc(boardRef);
+
+      if (!querySnapshot.exists()){
+        throw new Error("Board does not exist");
+      }
+
+      await updateDoc(boardRef, {
+        location: newLocation
+      });
+
+    } catch (error) {
+      console.error("Error updating location: ", error);
+    }
+  },
+
+  setBoardName : async (serialNumber: string, newName: string): Promise<void> => {
+    try {
+      const boardRef = doc(db, "boards", serialNumber);
+      const querySnapshot = await getDoc(boardRef);
+
+      if (!querySnapshot.exists()){
+        throw new Error("Board does not exist");
+      }
+
+      await updateDoc(boardRef, {
+        name: newName
+      });
+
+    } catch (error) {
+      console.error("Error updating location: ", error);
+    }
   },
 
   fetchAllBoards: async (userID?: string) => {

@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useMemo } from 'react';
 
 interface MapContextProps {
   mapRef: React.RefObject<HTMLDivElement>;
+  directionsRef: React.RefObject<HTMLDivElement>;
   map: google.maps.Map | undefined;
   directionsService: google.maps.DirectionsService;
   directionsRenderer: google.maps.DirectionsRenderer;
@@ -11,9 +12,10 @@ const MapContext = createContext<MapContextProps | null>(null);
 
 export const MapProvider = ({ children }: any) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const directionsRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>()
   const directionsService = new google.maps.DirectionsService();
-  const directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+  const directionsRenderer = useMemo(() => new google.maps.DirectionsRenderer({suppressMarkers: true}), []);
   
   useEffect(() => {
     if (mapRef.current && map === undefined) {
@@ -29,12 +31,15 @@ export const MapProvider = ({ children }: any) => {
     }
   }, [map]);
 
-  if (map){
-    directionsRenderer.setMap(map);
-  }
+  useEffect(() => {
+    if (map && directionsRef.current){
+      directionsRenderer.setMap(map);
+      directionsRenderer.setPanel(directionsRef.current);
+    }
+  })
 
   return (
-    <MapContext.Provider value={{ mapRef, map, directionsService, directionsRenderer }}>
+    <MapContext.Provider value={{ mapRef, directionsRef, map, directionsService, directionsRenderer }}>
       {children}
     </MapContext.Provider>
   );
