@@ -10,11 +10,39 @@ import {
   Stack,
   Text,
   Box,
+  Input,
 } from "@chakra-ui/react";
 import { DocumentData } from "firebase/firestore";
 import { PencilSimpleLine } from "@phosphor-icons/react";
+import FirestoreService from "../db/db";
+import React, { useState } from "react";
 
 const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
+  const [changingName, setChangingName] = useState<string | null>(null);
+  const [newName, setNewName] = useState("");
+
+  const updateName = async (boardSerial: string, newName: string) => {
+    try {
+      await FirestoreService.setBoardName(boardSerial, newName);
+      setChangingName(null);
+    } catch (error) {
+      console.error("Failed to update board name", error);
+    }
+  }
+
+  const toggleNameChange = (boardSerial: string) => {
+    setChangingName(boardSerial);
+  }
+
+  const handleNewName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewName(e.target.value);
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, boardSerial: string) => {
+    if (e.key === 'Enter') {
+      updateName(boardSerial, newName)
+    }
+  }
   
   return (
     <Flex flexWrap={"wrap"} margin={2}>
@@ -28,8 +56,20 @@ const Cards = ({ boards }: { boards: DocumentData[] | [] }) => {
             />
             <Stack mt="6" spacing="3">
               <Box display="flex" alignItems="center" justifyContent="space-between">
-                <Heading size="md">Board {i}</Heading>
-                <Button justifySelf="end" variant="link"><PencilSimpleLine/></Button>
+                {changingName === board.serialNumber ? (
+                  <Input 
+                    type="text" 
+                    variant="flushed"
+                    size="md"
+                    placeholder="Enter new name" 
+                    value={newName} 
+                    onChange={handleNewName} 
+                    onKeyDown={(e) => handleKeyDown(e, board.serialNumber)}
+                  />
+                ) : (
+                  <Heading size="md">{board.name ? board.name : `Board ${i}`}</Heading>
+                )}
+                <Button justifySelf="end" variant="link" onClick={() => toggleNameChange(board.serialNumber)}><PencilSimpleLine/></Button>
               </Box>
               <Text>Location: {board.location}</Text>
               <Text>Board Status: {board.status}</Text>

@@ -33,7 +33,7 @@ export const useMarker = (): useMarkerProps => {
 
     const updateStatus = async () => {
       try {
-        await FirestoreService.resetStatus(boardSerial);
+        await FirestoreService.setBoardStatus(boardSerial);
       } catch (error) {
         console.error("Failed to update board status", error);
       }

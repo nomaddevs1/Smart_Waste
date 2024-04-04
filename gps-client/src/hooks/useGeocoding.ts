@@ -18,7 +18,7 @@ export const useGeocoding = (): useGeocodingProps => {
       if (data.results && data.results.length > 0){
         const updateLocation = async () => {
           try {
-            await FirestoreService.setLocation(boardSerial, data.results[0].formatted_address);
+            await FirestoreService.setBoardLocation(boardSerial, data.results[0].formatted_address);
           } catch (error) {
             console.error("Failed to update board status", error);
           }
