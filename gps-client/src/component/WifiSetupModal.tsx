@@ -21,6 +21,7 @@ import { useBLEConnection } from "../hooks/useBLEConnection";
 import FirestoreService from "../db/db";
 import { useAuth } from "../context/UserAuthContext";
 import { useGeolocation } from "../hooks/useGeolocation";
+import { useGeocoding } from "../hooks/useGeocoding";
 
 interface WifiSetupModalProps {
   isOpen: boolean;
@@ -41,6 +42,7 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
   const modalBackground = useColorModeValue("white", "gray.700");
   const inputBorderColor = useColorModeValue("gray.300", "gray.600");
   const buttonHoverBg = useColorModeValue("blue.600", "blue.300");
+  const { getAddress } = useGeocoding(); 
   
   const handleSubmit = async () => {
     let lat = userLocation!.lat.toString()
@@ -65,15 +67,16 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
         status: "success",
         isClosable: true,
       }); 
-  }catch (e:any) {
-    await FirestoreService.updateBoard(serialNumber!,user!.uid, {lat, lng})
-      toast({
-        title: "Board Already exists",
-        description: e.message,
-        status: "info",
-        isClosable: true,
-    })
-  }
+      getAddress(serialNumber!, lat, lng);
+    }catch (e:any) {
+      await FirestoreService.updateBoard(serialNumber!,user!.uid, {lat, lng})
+        toast({
+          title: "Board Already exists",
+          description: e.message,
+          status: "info",
+          isClosable: true,
+      })
+    }
   };
   return (
     <Modal
