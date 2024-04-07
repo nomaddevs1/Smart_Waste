@@ -7,7 +7,7 @@ interface SignInWithGoogleButtonProps {
 
 export const SignInWithGoogleButton: React.FC<SignInWithGoogleButtonProps> = ({ signInWithGoogle }) => {
   return (
-    <Link color="teal.500" onClick={(e) => {
+    <Link color="white" onClick={(e) => {
         e.preventDefault();
         signInWithGoogle();
     }}>
