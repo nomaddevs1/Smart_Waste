@@ -51,7 +51,7 @@ function Header() {
           icon={<HamburgerIcon />} 
           display={{ base: "flex", md: "none" }} // Only display on small screens
           onClick={onOpen} 
-          colorScheme="blue"
+          color="white"
           variant="outline"
           aria-label="Options"
         />

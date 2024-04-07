@@ -42,10 +42,10 @@ const ProfileFormContainer: React.FC<Props> = ({
       return (
         <Box p="6" borderWidth="1px" borderRadius="lg" boxShadow="lg" bg="blue.900">
           <VStack spacing="4">
-            <Heading size="lg">Complete Your Profile</Heading>
+            <Heading color="teal.400" size="lg">Complete Your Profile</Heading>
             <FormControl id="role-select">
-              <FormLabel>Select Your Role</FormLabel>
-              <Select placeholder="Select role" value={role} onChange={handleRoleChange}>
+              <FormLabel color="white">Select Your Role</FormLabel>
+              <Select variant="flushed" color="white" placeholder="Select role" value={role} onChange={handleRoleChange}>
                 <option value="organization">Organization</option>
                 <option value="client">Client</option>
                 <option value="collector">Collector</option>
@@ -54,28 +54,30 @@ const ProfileFormContainer: React.FC<Props> = ({
             {showFields && (
               <SlideFade in={showFields} offsetY="20px" style={{ width: '100%' }}>
                 <FormControl id="username-input">
-                  <FormLabel>Username</FormLabel>
-                  <Input placeholder="Enter your username" value={username} onChange={handleInputChange('username')} />
+                  <FormLabel color="white">Username</FormLabel>
+                  <Input variant="flushed" color="white" placeholder="Enter your username" value={username} onChange={handleInputChange('username')} />
                 </FormControl>
                 {role === "organization" && (
-                  <FormControl id="org-name-input">
-                    <FormLabel>Organization Name</FormLabel>
-                    <Input placeholder="Enter your organization name" value={orgName} onChange={handleInputChange('orgName')} />
+                  <FormControl id="org-name-input" mt="20px">
+                    <FormLabel color="white">Organization Name</FormLabel>
+                    <Input variant="flushed" color="white" placeholder="Enter your organization name" value={orgName} onChange={handleInputChange('orgName')} />
                   </FormControl>
                 )}
                 {role === "collector" && orgs.length > 0 && (
-                  <FormControl id="org-details-input">
-                    <FormLabel>Select your org</FormLabel>
-                    <Select placeholder="Select your organization" value={orgId} onChange={handleInputChange('orgId')}>
+                  <FormControl id="org-details-input" mt="20px">
+                    <FormLabel color="white">Organization</FormLabel>
+                    <Select variant="flushed" color="white" placeholder="Select organization" value={orgId} onChange={handleInputChange('orgId')}>
                       {orgs.map((org) => (
                         <option key={org.id} value={org.id}>{org.orgName}</option>
                       ))}
                     </Select>
                   </FormControl>
                 )}
-                <Button colorScheme="teal" width="full" onClick={onSubmit} mt="4">
-                  Submit
-                </Button>
+                <Box display="flex" justifyContent="center">
+                  <Button colorScheme="teal" width="80%" onClick={onSubmit} mt="4" borderRadius="50px">
+                    Submit
+                  </Button>
+                </Box>
               </SlideFade>
             )}
           </VStack>
