@@ -62,7 +62,7 @@ void setup()
     // clearEEprom();
     BLE.begin();
     setBLEcharacteristics();
-    initializeSerialNumberCharacteristic(serialNumber);
+    initializeSerialNumberCharacteristic();
     setupGPS();
     pinMode(trigPin, OUTPUT);
     pinMode(trigPin2, OUTPUT);
@@ -79,8 +79,7 @@ void clearEEprom(){
     Serial.println("Cleared EEPROM");
 }
 
-void loop()
-{
+void loop(){
   distanceCalc(trigPin, echoPin, distance);
   distanceCalc(trigPin2, echoPin2, distance2);
   if (distance > 10.0 && distance2 > 10.0){
@@ -91,11 +90,13 @@ void loop()
 
   if (!gnggaCaptured){
     readGPS(latitude, longitude);
-    if (gnggaCaptured)
-      {
-          jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lng\": " + String(longitude, 6) + ", \"serialNumber\": \"" + serialNumber + "\"}";
+    if (gnggaCaptured){
+      if (serialNumber != ""){
+        jsonData = "{\"lat\": " + String(latitude, 6) + ", \"lng\": " + String(longitude, 6) + ", \"serialNumber\": \"" + serialNumber + "\"}";
       }
+    }
   }
+
   
 
   if (WiFi.status() == WL_CONNECTED && gnggaCaptured && distance < 10.0 && distance2 < 10.0 && !sentHTTP)
@@ -103,6 +104,7 @@ void loop()
       delay(5000);
       distanceCalc(trigPin, echoPin, distance);
       if(distance < 10.0){
+        Serial.println(jsonData);
         sendHttpRequest(jsonData);
         sentHTTP = true;
       }

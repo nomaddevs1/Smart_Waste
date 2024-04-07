@@ -1,8 +1,9 @@
 #include "SerialNumberHandler.h"
 
 // Initialize the BLE Characteristic for Serial Number
+String serialNumber = "";
 
-void initializeSerialNumberCharacteristic(String &serialNumber) {
+void initializeSerialNumberCharacteristic() {
     // Check EEPROM for existing serial number and initialize characteristic
     Serial.println("Serials");
     for (int i = 0; i < 512; ++i) {
@@ -24,7 +25,9 @@ void serialNumberCharacteristicWritten(BLEDevice central, BLECharacteristic char
     String newSerialNumber = "";
     for (int i = 0; i < length; i++) {
         newSerialNumber += (char)data[i];
+        serialNumber += (char)data[i];
     }
+    Serial.println("Updated serial number: " + serialNumber);
     for (unsigned int i = 0; i < newSerialNumber.length(); ++i) {
         EEPROM.write(i, newSerialNumber[i]);
     }
