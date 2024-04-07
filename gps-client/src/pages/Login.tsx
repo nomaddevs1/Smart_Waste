@@ -21,7 +21,16 @@ const LoginPane = () => {
 
   return (
     <Flex width="100wh" height="100vh" alignItems="center" justifyContent="center">
-      <Flex bg="blue.900" flexDirection="column" alignItems="center" justifyContent="center" width={{base: "90%", md: "30rem"}} height={{base: "70%", md: "60%"}} borderRadius="10px" boxShadow="md">
+      <Flex 
+        bg="blue.900" 
+        flexDirection="column" 
+        alignItems="center" 
+        justifyContent="center" 
+        width={{base: "90%", md: "30rem"}} 
+        height={{base: "70%", md: "60%"}} 
+        borderRadius="10px" 
+        boxShadow="md"
+      >
         <Avatar bg="teal.500" />
         <Heading color="teal.400">{isSignUp ? "Welcome" : "Welcome Back"}</Heading>
         <Box width="100%" p="0 10% 0%" mt="1rem">

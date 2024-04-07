@@ -26,7 +26,7 @@ function Header() {
       boxShadow="0px 1px 2px 2px rgba(0, 0, 0, 0.13)"
       justifyContent="space-between" 
     >
-      <Logo w="100px" color="white" />
+      <Logo color="white" />
       
       {/* Display for larger screens */}
       <Stack
