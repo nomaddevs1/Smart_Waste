@@ -5,10 +5,16 @@ import bin_empty from '../assets/bin_empty.svg';
 import bin_full from '../assets/bin_full.svg';
 import { useAuth } from "../context/UserAuthContext";
 import FirestoreService from "../db/db";
+import "../styles/marker.css";
 
 interface useMarkerProps {
-  createMarker: (position: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => void;
-  markers: Array<google.maps.marker.AdvancedMarkerElement>
+  createMarker: (
+    position: google.maps.LatLngLiteral, 
+    boardSerial: string, 
+    binStatus: string, 
+    boardName: string,
+    boardLocation: string,
+  ) => void;
 }
 
 export const useMarker = (): useMarkerProps => {
@@ -16,9 +22,24 @@ export const useMarker = (): useMarkerProps => {
   const { userLocation } = useGeolocation();
   const { calculateRoute } = useDirections();
   const { isAuthenticated } = useAuth()!;
-  let markers: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
-  const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string, binStatus: string) => {
+  const toggleHighlight = (marker: google.maps.marker.AdvancedMarkerElement) => {
+    if(marker.content){
+      const markerContent = marker.content as HTMLElement;
+      if (markerContent.classList.contains("highlight")){
+        markerContent.classList.remove("highlight");
+        marker.zIndex = null;
+      } else {
+        markerContent.classList.add("highlight");
+        marker.zIndex = 1;
+      }
+    }
+  }
+
+  const buildContent = (boardSerial: string, markerPosition: google.maps.LatLngLiteral, binStatus: string, boardName: string, boardLocation: string) => {
+    const content = document.createElement('div');
+    content.classList.add(`mapMarker`)
+    
     const binSvg = document.createElement('img');
     binSvg.src = binStatus === "full" ? bin_full : bin_empty ;
     binSvg.style.width = '20px';
@@ -30,6 +51,9 @@ export const useMarker = (): useMarkerProps => {
       background: binStatus === "full" ?  '#C53030' : '#2F855A',
       borderColor: binStatus === "full" ? '#9B2C2C': '#276749',
     });
+
+    binGlyph.element.classList.add(`markerGlyph`);
+    content.appendChild(binGlyph.element);
 
     const updateStatus = async () => {
       try {
@@ -47,45 +71,58 @@ export const useMarker = (): useMarkerProps => {
       }
     }
 
-    const infowindow = new google.maps.InfoWindow();
-    const info = document.createElement('div');
-    const infoSN = document.createElement('p');
-    infoSN.textContent = `SN: ${boardSerial}`;
+    const popup = document.createElement("div");
+    popup.classList.add(`markerPopup`)
+
+    const popupContainer = document.createElement("div");
+    popupContainer.classList.add('popupContainer');
+
+    const boardIdentifier = document.createElement('h3');
+    boardIdentifier.textContent = `${boardName ? boardName : boardSerial}`;
+    popupContainer.append(boardIdentifier);
+
+    const boardAddress = document.createElement('p');
+    boardAddress.textContent = `${boardLocation.split(',')[0]}`;
+    popupContainer.append(boardAddress)
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("buttonContainer");
 
     const routeButton = document.createElement('button');
     routeButton.textContent = 'Get Route';
     routeButton.onclick = () => {getRoute()};
-
-    info.appendChild(infoSN);
-    info.appendChild(routeButton);
+    buttonContainer.append(routeButton);
 
     if (isAuthenticated && binStatus === 'full') {
       const resetStatus = document.createElement('button');
       resetStatus.textContent = "Reset Status";
       resetStatus.onclick = () => {updateStatus()};
-      info.appendChild(resetStatus);
+      buttonContainer.appendChild(resetStatus);
     }
 
+    popupContainer.appendChild(buttonContainer);
+    popup.appendChild(popupContainer);
+    content.appendChild(popup);
+
+    return content;
+  }
+
+  const createMarker = (markerPosition: google.maps.LatLngLiteral, boardSerial: string, binStatus: string, boardName: string, boardLocation: string) => {
     if (map){
       const newMarker = new google.maps.marker.AdvancedMarkerElement({
         map,
         position: markerPosition, 
-        content: binGlyph.element,
+        content: buildContent(boardSerial, markerPosition, binStatus, boardName, boardLocation),
         title: `Board: ${boardSerial}`,
       })
 
       if (newMarker){
         newMarker.addListener("click", () => {
-          infowindow.setContent(info);
-          infowindow.open({
-            anchor: newMarker,
-            map,
-          })
+          toggleHighlight(newMarker);
         })
-        markers.push(newMarker);
       }
     }
   }
 
-  return { createMarker, markers }
+  return { createMarker }
 }

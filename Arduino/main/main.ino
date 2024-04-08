@@ -9,7 +9,6 @@
 String jsonData;
 float latitude, longitude;
 float distance;
-String serialNumber = "";
 float distance2;
 const int trigPin = 9;
 const int trigPin2 = 7;

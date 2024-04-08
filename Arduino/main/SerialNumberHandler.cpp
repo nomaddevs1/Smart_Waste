@@ -1,6 +1,6 @@
 #include "SerialNumberHandler.h"
 
-// Initialize the BLE Characteristic for Serial Number
+
 String serialNumber = "";
 
 void initializeSerialNumberCharacteristic() {
