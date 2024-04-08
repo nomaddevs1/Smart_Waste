@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "@chakra-ui/react";
+import { Link } from "@chakra-ui/react";
 
 interface AuthToggleLinkProps {
   isSignUp: boolean;
@@ -8,8 +8,8 @@ interface AuthToggleLinkProps {
 
 export const AuthToggleLink: React.FC<AuthToggleLinkProps> = ({ isSignUp, toggleSignUp }) => {
   return (
-    <Text cursor="pointer" color="teal.300" onClick={toggleSignUp}>
+    <Link cursor="pointer" color="white" onClick={toggleSignUp}>
       {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-    </Text>
+    </Link>
   );
 };

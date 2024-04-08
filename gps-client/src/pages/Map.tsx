@@ -19,7 +19,7 @@ function Map() {
   useEffect(() => {
     boards.forEach(board => {
       if(board.lat && board.lng){
-       createMarker({ lat:parseFloat(board.lat), lng: parseFloat(board.lng)}, board.serialNumber, board.status)
+       createMarker({ lat:parseFloat(board.lat), lng: parseFloat(board.lng)}, board.serialNumber, board.status, board.name, board.location);
       }
     });
     

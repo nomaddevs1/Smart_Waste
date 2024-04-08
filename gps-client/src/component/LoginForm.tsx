@@ -7,9 +7,12 @@ import {
   InputLeftElement,
   Stack,
   useToast,
+  Link,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { chakra } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+
 
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
@@ -25,6 +28,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp, onSignIn, onSign
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const toast = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -58,28 +62,33 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp, onSignIn, onSign
 
   return (
     <form onSubmit={handleSubmit}>
-      <Stack spacing={4} p="1rem" backgroundColor="blue.900" boxShadow="md">
+      <Stack spacing={4} p="1rem" mb="20px"alignItems="center" gap="30px">
         <FormControl isRequired>
           <InputGroup>
-            <InputLeftElement pointerEvents="none" children={<CFaUserAlt color="gray.300" />} />
-            <Input type="email" placeholder="email address" onChange={(e) => setEmail(e.target.value)} color="white" />
+            <InputLeftElement pointerEvents="none" children={<CFaUserAlt color="white" />} />
+            <Input variant="flushed" type="email" placeholder="email address" onChange={(e) => setEmail(e.target.value)} color="white" />
           </InputGroup>
         </FormControl>
         <FormControl isRequired>
           <InputGroup>
-            <InputLeftElement pointerEvents="none" children={<CFaLock color="gray.300" />} />
-            <Input type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} color="white" />
+            <InputLeftElement pointerEvents="none" children={<CFaLock color="white" />} />
+            <Input variant="flushed" type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} color="white" />
           </InputGroup>
+          {!isSignUp && (
+            <Link display="flex" justifyContent="flex-end" color="whiteAlpha.600" onClick={() => navigate("/forgot-password")}>
+              Forgot Password?
+            </Link>
+          )}         
         </FormControl>
         {isSignUp && (
           <FormControl isRequired>
             <InputGroup>
-              <InputLeftElement pointerEvents="none" children={<CFaLock color="gray.300" />} />
-              <Input type="password" placeholder="confirm password" onChange={(e) => setConfirmPassword(e.target.value)} color="white" />
+              <InputLeftElement pointerEvents="none" children={<CFaLock color="white" />} />
+              <Input variant="flushed" type="password" placeholder="confirm password" onChange={(e) => setConfirmPassword(e.target.value)} color="white" />
             </InputGroup>
           </FormControl>
         )}
-        <Button type="submit" colorScheme="teal" width="full">
+        <Button type="submit" colorScheme="teal" width="80%" borderRadius="50px" >
           {isSignUp ? "Sign Up" : "Sign In"}
         </Button>
       </Stack>
