@@ -82,8 +82,10 @@ export const useMarker = (): useMarkerProps => {
     popupContainer.append(boardIdentifier);
 
     const boardAddress = document.createElement('p');
+    if(boardLocation){
     boardAddress.textContent = `${boardLocation.split(',')[0]}`;
     popupContainer.append(boardAddress)
+    }
 
     const buttonContainer = document.createElement("div");
     buttonContainer.classList.add("buttonContainer");
