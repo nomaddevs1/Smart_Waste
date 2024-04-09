@@ -3,26 +3,38 @@ import { useMapContext } from "../context/MapContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { useBoardContext } from "../context/BoardContext";
 import { useMarker } from "../hooks/useMarker";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import FirestoreService from "../db/db";
+import { useAuth } from "../context/UserAuthContext";
 
 
 function Map() {
   const { map, mapRef, directionsRef } = useMapContext();
   const {userLocation} = useGeolocation();
   const { boards } = useBoardContext()!
-  const { createMarker } = useMarker();
+  const {user} = useAuth()!
+  const roleRef = useRef("");
+  const { createMarker } = useMarker(roleRef.current as string);
   
+
   if (map && userLocation) {
     map.panTo(userLocation);
   }
   
   useEffect(() => {
+    (async () => {
+      if(user){
+      roleRef.current =await FirestoreService.getUserRole(user!.uid) as string
+      }
+    })()
+  }, [user])
+  useEffect(() => {
+
     boards.forEach(board => {
       if(board.lat && board.lng){
        createMarker({ lat:parseFloat(board.lat), lng: parseFloat(board.lng)}, board.serialNumber, board.status, board.name, board.location);
       }
     });
-    
   });
 
   return (

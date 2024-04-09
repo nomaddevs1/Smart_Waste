@@ -21,7 +21,6 @@ const useCreateUserRole = () => {
       return;
     }
     try {
-      console.log(role)
       switch (role) {
         case 'organization':
           await FirestoreService.addOrganization(user.uid, username, user.email!, orgDetails);
