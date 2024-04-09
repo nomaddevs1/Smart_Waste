@@ -17,11 +17,11 @@ interface useMarkerProps {
   ) => void;
 }
 
-export const useMarker = (): useMarkerProps => {
+export const useMarker = (role: string): useMarkerProps => {
   const { map } = useMapContext();
   const { userLocation } = useGeolocation();
   const { calculateRoute } = useDirections();
-  const { isAuthenticated } = useAuth()!;
+  const { isAuthenticated} = useAuth()!;
 
   const toggleHighlight = (marker: google.maps.marker.AdvancedMarkerElement) => {
     if(marker.content){
@@ -54,7 +54,6 @@ export const useMarker = (): useMarkerProps => {
 
     binGlyph.element.classList.add(`markerGlyph`);
     content.appendChild(binGlyph.element);
-
     const updateStatus = async () => {
       try {
         await FirestoreService.setBoardStatus(boardSerial);
@@ -95,7 +94,7 @@ export const useMarker = (): useMarkerProps => {
     routeButton.onclick = () => {getRoute()};
     buttonContainer.append(routeButton);
 
-    if (isAuthenticated && binStatus === 'full') {
+    if (isAuthenticated && binStatus === 'full' && role === "collector") {
       const resetStatus = document.createElement('button');
       resetStatus.textContent = "Reset Status";
       resetStatus.onclick = () => {updateStatus()};

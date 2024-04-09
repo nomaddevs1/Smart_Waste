@@ -12,8 +12,7 @@ const BoardContext = createContext<BoardContextProps | null>(null);
 
 export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const { user, isLoading } = useAuth()!;
-  const [boards, setBoards] = useState<DocumentData[] | []>([]);
-
+  const [boards, setBoards] = useState<DocumentData[] | []>([]); 
 
   useEffect(() => {
     if (isLoading) {
@@ -25,7 +24,6 @@ export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children 
       const setupBoardListener = async () => {
         try {
           unsubscribeFn = await FirestoreService.listenForBoardUpdates(user.uid, (data) => {
-            
             setBoards(data);
           });
         } catch (err) { 

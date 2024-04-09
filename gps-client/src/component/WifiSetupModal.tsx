@@ -67,7 +67,6 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
         status: "success",
         isClosable: true,
       }); 
-      getAddress(serialNumber!, lat, lng);
     }catch (e:any) {
       await FirestoreService.updateBoard(serialNumber!,user!.uid, {lat, lng})
         toast({
@@ -77,6 +76,7 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
           isClosable: true,
       })
     }
+    getAddress(serialNumber!, lat, lng);
   };
   return (
     <Modal

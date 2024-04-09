@@ -65,6 +65,7 @@ const FirestoreService = {
       { merge: true }
     );
   },
+  
   addCollector: async (
     userId: string,
     name: string,
@@ -81,6 +82,7 @@ const FirestoreService = {
       console.log(err);
     }
   },
+
   getUser: async (userId: string): Promise<DocumentData | null> => {
     const user = await getDoc(doc(db, "users", userId));
     if (user.exists()) {
@@ -276,8 +278,6 @@ const FirestoreService = {
     return false; 
   },
 
-  
-
   getOrg: async (
     userId: string,
     serialNumber: string
@@ -289,7 +289,6 @@ const FirestoreService = {
       return docSnap.data();
     }
   },
-
 
   getAllOrg: async (): Promise<DocumentData[] | []> => {
     const orgList: { id: string }[] = [];
@@ -303,7 +302,6 @@ const FirestoreService = {
 
     return orgList ? orgList : [];
   },
-
 
   assignBoardToClient: async (
     boardId: string,
