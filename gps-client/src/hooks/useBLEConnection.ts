@@ -37,13 +37,13 @@ export const useBLEConnection = (
       });
       const server = await device.gatt!.connect();
       const service = await server.getPrimaryService(
-        process.env.REACT_APP_SERIAL_CHARACTERISTICS
+        process.env.REACT_APP_SEVICE_PRIMARY_UID
       );
       const serialCharacteristic = await service.getCharacteristic(
-        process.env.REACT_APP_WIFI_CHARACTERISTICS
+        process.env.REACT_APP_SERIAL_CHARACTERISTICS
       );
       const wifiCharacteristic = await service.getCharacteristic(
-        "19b10001-e8f2-537e-4f6c-d104768a1214"
+        process.env.REACT_APP_WIFI_CHARACTERISTICS
       );
 
       // Serial number
@@ -76,6 +76,7 @@ export const useBLEConnection = (
         ? newSerialNumber
         : serialNumber;
     } catch (error) {
+      console.log(error);
       toast({
         title: "Connection Error",
         description: "Failed to connect to BLE device.",
