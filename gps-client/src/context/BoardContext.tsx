@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { DocumentData } from "firebase/firestore";
 import FirestoreService from "../db/db";
 import { useAuth } from "./UserAuthContext";
-import { useGeocoding } from "../hooks/useGeocoding";
 
 interface BoardContextProps {
   boards: DocumentData[] | [];
@@ -13,8 +12,7 @@ const BoardContext = createContext<BoardContextProps | null>(null);
 
 export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const { user, isLoading } = useAuth()!;
-  const [boards, setBoards] = useState<DocumentData[] | []>([]);
-  const { getAddress } = useGeocoding(); 
+  const [boards, setBoards] = useState<DocumentData[] | []>([]); 
 
   useEffect(() => {
     if (isLoading) {
@@ -26,11 +24,6 @@ export const BoardProvider: React.FC<{children: React.ReactNode}> = ({ children 
       const setupBoardListener = async () => {
         try {
           unsubscribeFn = await FirestoreService.listenForBoardUpdates(user.uid, (data) => {
-            data.forEach((item) => {
-              if(item.location !== ""){
-              getAddress(item.serialNumber, item.lat, item.lng);
-              }
-            })
             setBoards(data);
           });
         } catch (err) { 
