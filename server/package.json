@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc",
+    "build": "rimraf build && tsc",
     "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add build",
     "render-build": "node ./build/index.js"
   },
   "execMap": {
