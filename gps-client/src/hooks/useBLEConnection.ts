@@ -33,14 +33,14 @@ export const useBLEConnection = (
       let newSerialNumber;
       //@ts-ignore
       const device = await navigator.bluetooth.requestDevice({
-        filters: [{ services: ["19b10000-e8f2-537e-4f6c-d104768a1214"] }],
+        filters: [{ services: [process.env.REACT_APP_SEVICE_PRIMARY_UID] }],
       });
       const server = await device.gatt!.connect();
       const service = await server.getPrimaryService(
-        "19b10000-e8f2-537e-4f6c-d104768a1214"
+        process.env.REACT_APP_SERIAL_CHARACTERISTICS
       );
       const serialCharacteristic = await service.getCharacteristic(
-        "19b10002-e8f2-537e-4f6c-d104768a1214"
+        process.env.REACT_APP_WIFI_CHARACTERISTICS
       );
       const wifiCharacteristic = await service.getCharacteristic(
         "19b10001-e8f2-537e-4f6c-d104768a1214"
