@@ -57,7 +57,6 @@ const Cards = () => {
     <Flex
       flexWrap={"wrap"}
       margin={2}
-      
     >
       {boards.map((board, i) => (
         <Card maxW="sm" key={i} margin={5}>
@@ -84,7 +83,7 @@ const Cards = () => {
                 )}
                 <Button justifySelf="end" variant="link" onClick={() => toggleNameChange(board.serialNumber)}><PencilSimpleLine/></Button>
               </Box>
-              <Text>Location:     {board.location}</Text>
+              <Text>Location: {board.location}</Text>
               <Box display="flex" alignItems="center">
                 <Text>Bin Status:</Text>
                 <Text ml="4px" color={board.status === "full" ? 'red.600' : 'green.600'}>{board.status}</Text>

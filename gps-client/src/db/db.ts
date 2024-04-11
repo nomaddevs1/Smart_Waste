@@ -174,8 +174,8 @@ const FirestoreService = {
   ) => {
     const user = await FirestoreService.getUser(userId);
     const que =
-      user!.role === "organization" || "collector" ? "orgId" : "clientId";
-    const id = user!.role === "organization" || "collector"? user!.orgId : userId;
+      (user!.role === "organization" || user!.role ==="collector" )? "orgId" : "clientId";
+    const id =( user!.role === "organization" || user!.role === "collector")? user!.orgId : userId;
     const boardsRef = collection(db, "boards");
     let q = query(boardsRef, where(que, "==", id));
 
@@ -292,8 +292,8 @@ const FirestoreService = {
 
   getAllOrg: async (): Promise<DocumentData[] | []> => {
     const orgList: { id: string }[] = [];
-    const querySnapshot = await getDocs(collection(db, "organizations"));
-    querySnapshot.forEach((doc) => {
+    const orgSnap = await getDocs(collection(db, "organizations"));
+    orgSnap.forEach((doc) => {
       orgList.push({
         id: doc.id,
         ...doc.data(),
@@ -348,6 +348,20 @@ const FirestoreService = {
       }
     } catch (e: any) {
       throw new Error(e.message);
+    }
+  },
+
+  getBoardClientId: async (serialNumber: string): Promise<string | null> => {
+    try {
+      const boardRef = doc(db, "boards", serialNumber);
+      const docSnap = await getDoc(boardRef);
+      if (docSnap.exists()) {
+        return docSnap.data().clientId;
+      } else {
+        return null;
+      }
+    } catch (error: any) {
+      throw new Error("Error getting board client id", error.message);
     }
   },
 };

@@ -27,9 +27,10 @@ const LoginPane = () => {
         alignItems="center" 
         justifyContent="center" 
         width={{base: "90%", md: "30rem"}} 
-        height={{base: "70%", md: "60%"}} 
+        height="auto"
         borderRadius="10px" 
         boxShadow="md"
+        p="2rem 0"
       >
         <Avatar bg="teal.500" />
         <Heading color="teal.400">{isSignUp ? "Welcome" : "Welcome Back"}</Heading>

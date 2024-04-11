@@ -27,7 +27,8 @@ function Map() {
       roleRef.current =await FirestoreService.getUserRole(user!.uid) as string
       }
     })()
-  }, [user])
+  }, [user]);
+  
   useEffect(() => {
 
     boards.forEach(board => {
