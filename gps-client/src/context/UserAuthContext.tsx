@@ -56,8 +56,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await signInWithPopup(auth1, provider);
       setUser(result.user);
       return result;
-    } catch (error) {
-      console.error("Error signing in with Google", error);
+    } catch (error: any) {
+      toast({
+        title: "Sign-In Error",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
       return null;
     }
   };
@@ -66,7 +72,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await signInWithEmailAndPassword(auth1, email, password);
       setUser(result.user);
     } catch (error) {
-      console.error("Error signing in with email and password", error);
       toast({
         title: "Error",
         description: "Failed to sign in. Please check your credentials.",
@@ -88,7 +93,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error sending password reset email", error);
       toast({
         title: "Error",
         description: "Failed to send password reset email.",
@@ -123,7 +127,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             isClosable: true,
           });
         }).catch((linkError: any) => {
-          console.error("Error linking accounts", linkError);
           toast({
             title: "Error Linking Accounts",
             description: linkError.message,
@@ -133,7 +136,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           });
         });
       }).catch((signInError) => {
-        console.error("Error signing in with Google", signInError);
         toast({
           title: "Sign-In Error",
           description: signInError.message,
@@ -143,7 +145,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
       });
     } else {
-      console.error("Error creating user with email and password", error);
       toast({
         title: "Error creating account",
         description: error.message,
