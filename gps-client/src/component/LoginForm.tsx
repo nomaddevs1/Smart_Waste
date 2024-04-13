@@ -8,10 +8,10 @@ import {
   Stack,
   useToast,
   Link,
+  Text,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { chakra } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 
 
 const CFaUserAlt = chakra(FaUserAlt);
@@ -69,6 +69,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp,isForgot, onSignI
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={4} p="1rem" mb="20px"alignItems="center" gap="30px">
+        {isForgot && (
+          <Text color="white">Enter the email associated with your account to recieve a password reset link.</Text>
+        )}
         <FormControl isRequired>
           <InputGroup>
             <InputLeftElement pointerEvents="none" children={<CFaUserAlt color="white" />} />
@@ -76,7 +79,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp,isForgot, onSignI
           </InputGroup>
         </FormControl>
         <FormControl isRequired>
-        {!isForgot&&( 
+        {!isForgot && ( 
           <InputGroup>
             <InputLeftElement pointerEvents="none" children={<CFaLock color="white" />} />
             <Input variant="flushed" type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} color="white" />
@@ -97,7 +100,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp,isForgot, onSignI
           </FormControl>
         )}
         <Button type="submit" colorScheme="teal" width="80%" borderRadius="50px" >
-          {!isForgot ?(isSignUp ? "Sign Up" : "Sign In"): "Resert Password"}
+          {!isForgot ?(isSignUp ? "Sign Up" : "Sign In"): "Reset Password"}
         </Button>
       </Stack>
     </form>
