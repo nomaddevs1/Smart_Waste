@@ -24,6 +24,7 @@ export interface UserContextState {
   signInWithEmailAndPasswordFunc: (email: string, password: string) => Promise<void>;
   signUpWithEmailAndPassword: (email: string, password: string) => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
   user: User | null;
 }
 
@@ -81,6 +82,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
     }
   };
+  const forgotPassword = async (email: string): Promise<void> => {
+    try {
+      await sendPasswordResetEmail(auth1, email);
+      toast({
+          title: "Success",
+          description: "Password reset email sent successfully. Check your inbox.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+      });
+  } catch (error: any) {
+      toast({
+          title: "Error",
+          description: `Failed to send password reset email: ${error.message}`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+      });
+  }
+  }
 
   const sendPasswordResetEmailFunc = async (email: string): Promise<void> => {
     try {
@@ -165,6 +186,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signInWithEmailAndPasswordFunc,
     signUpWithEmailAndPassword,
     sendPasswordResetEmail: sendPasswordResetEmailFunc,
+    forgotPassword
   };
 
   return (
