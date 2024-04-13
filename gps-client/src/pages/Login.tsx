@@ -8,9 +8,10 @@ import { AuthToggleLink } from "../component/AuthToggleLink";
 import { LoginForm } from "../component/LoginForm";
 
 const LoginPane = () => {
-  const { signInWithGoogle, signUpWithEmailAndPassword, signInWithEmailAndPasswordFunc, user, isLoading } = useAuth()!;
+  const { signInWithGoogle, signUpWithEmailAndPassword, signInWithEmailAndPasswordFunc, user, isLoading , forgotPassword} = useAuth()!;
   const isFirstTime = useFirstTimeLoginCheck();
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgot, setForgot] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,10 +28,10 @@ const LoginPane = () => {
         alignItems="center" 
         justifyContent="center" 
         width={{base: "90%", md: "30rem"}} 
-        height="auto"
+        height="auto" 
         borderRadius="10px" 
         boxShadow="md"
-        p="2rem 0"
+        padding="2rem 0"
       >
         <Avatar bg="teal.500" />
         <Heading color="teal.400">{isSignUp ? "Welcome" : "Welcome Back"}</Heading>
@@ -38,7 +39,10 @@ const LoginPane = () => {
           <LoginForm
             isSignUp={isSignUp}
             onSignIn={signInWithEmailAndPasswordFunc}
+            isForgot={isForgot}
             onSignUp={async (email: string, password: string) => await signUpWithEmailAndPassword(email, password)}
+            onForgot={async (email: string) => await forgotPassword(email)}
+            toggleForgot ={() => setForgot(!isForgot)}
           />
           <Box display="flex" flexDirection="column" alignItems="center">
             <SignInWithGoogleButton signInWithGoogle={signInWithGoogle} />

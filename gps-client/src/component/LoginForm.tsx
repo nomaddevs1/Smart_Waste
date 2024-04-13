@@ -19,20 +19,23 @@ const CFaLock = chakra(FaLock);
 
 interface LoginFormProps {
   isSignUp: boolean;
+  isForgot: boolean;
   onSignIn: (email: string, password: string) => Promise<void>;
   onSignUp: (email: string, password: string, confirmPassword: string) => Promise<void>;
+  onForgot: (email:string) => Promise<void>;
+  toggleForgot: () => void
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp, onSignIn, onSignUp }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp,isForgot, onSignIn, onSignUp, onForgot, toggleForgot }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const toast = useToast();
-  const navigate = useNavigate();
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!isForgot && (!email || !password)) {
       toast({
         title: "Error",
         description: "Please enter both email and password.",
@@ -56,7 +59,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp, onSignIn, onSign
       }
       await onSignUp(email, password, confirmPassword);
     } else {
-      await onSignIn(email, password);
+      if(isForgot){
+        await onForgot(email)
+      }else{
+      await onSignIn(email, password);}
     }
   };
 
@@ -70,13 +76,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp, onSignIn, onSign
           </InputGroup>
         </FormControl>
         <FormControl isRequired>
+        {!isForgot&&( 
           <InputGroup>
             <InputLeftElement pointerEvents="none" children={<CFaLock color="white" />} />
             <Input variant="flushed" type="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} color="white" />
-          </InputGroup>
+          </InputGroup>)
+          }
           {!isSignUp && (
-            <Link display="flex" justifyContent="flex-end" color="whiteAlpha.600" onClick={() => navigate("/forgot-password")}>
-              Forgot Password?
+            <Link display="flex" justifyContent="flex-end" color="whiteAlpha.600" onClick={() =>toggleForgot()}>
+              {!isForgot? "Forgot Password?": "Cancel"}
             </Link>
           )}         
         </FormControl>
@@ -89,7 +97,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp, onSignIn, onSign
           </FormControl>
         )}
         <Button type="submit" colorScheme="teal" width="80%" borderRadius="50px" >
-          {isSignUp ? "Sign Up" : "Sign In"}
+          {!isForgot ?(isSignUp ? "Sign Up" : "Sign In"): "Resert Password"}
         </Button>
       </Stack>
     </form>
