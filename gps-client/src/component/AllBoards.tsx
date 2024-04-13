@@ -42,7 +42,7 @@ const AllBoards = () => {
     <Box ml="2rem">
       <Heading fontSize="2xl" mb="4">All Organizations</Heading>
       {orgs.map((org: any) => (
-        <Card mb="4" key={org.id} width="30rem" borderRadius="10px">
+        <Card mb="4" key={org.id} width={{base: "90%", md: "30rem"}} borderRadius="10px">
           <CardHeader bgColor="blue.900" borderTopRadius="5px">
             <Heading fontSize="lg" color="white">{org.orgName}</Heading>
           </CardHeader>

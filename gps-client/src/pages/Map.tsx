@@ -36,15 +36,15 @@ function Map() {
   });
 
   return (
-    <Flex height="100%">
-      <Box width="100%" height="100%" ref={mapRef} id="map"/>
+    <Flex height="100%" flexDirection={{base: 'column', md: 'row'}}>
+      <Box width="100%" pt="80px" height="100%" ref={mapRef} id="map"/>
         <Box
           ref={directionsRef}
-          p="80px 1rem 1rem 1rem"
+          p={{base: "1rem", md: "80px 1rem 1rem 1rem"}}
           flexBasis="15rem"
           flexGrow="1"
           maxWidth="30rem"
-          height="100%"
+          height={{base: "70%", md: "100%"}}
           boxSizing="border-box"
           flex="0 1 auto"
           display="none" 
@@ -53,7 +53,7 @@ function Map() {
           overflow="auto"
           justifyContent="space-between"
         >
-          <Link isExternal href={`https://google.com/maps/dir/?api=1&origin=${originStr}&destination=${destinationStr}`} width="100%" mt="10px">
+          <Link isExternal href={`https://google.com/maps/dir/?api=1&origin=${originStr}&destination=${destinationStr}`} width="100%" mt={{md: "10px"}}>
             <Button width="100%" colorScheme="teal">Open Google Maps</Button>
           </Link>
         </Box>
