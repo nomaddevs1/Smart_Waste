@@ -31,7 +31,7 @@ export const useDirections = (): useDirectionsProps => {
     });
 
     if (directionsRef.current) {
-      directionsRef.current.style.padding=("80px 1rem 1rem 1rem");
+      directionsRef.current.style.display="flex";
     }
 
     directionsService
