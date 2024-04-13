@@ -291,14 +291,27 @@ const FirestoreService = {
   },
 
   getAllOrg: async (): Promise<DocumentData[] | []> => {
-    const orgList: { id: string }[] = [];
+    const orgList: { id: string, boardList?: any }[] = [];
     const orgSnap = await getDocs(collection(db, "organizations"));
-    orgSnap.forEach((doc) => {
+    for (const orgDoc of orgSnap.docs) {
+      const orgBoards: any = [];
+
+      const boardSnap = collection(db, 'boards');
+      const boardQuery = query(boardSnap, where('orgId', '==', orgDoc.id));
+      const boardRef = await getDocs(boardQuery);
+      boardRef.forEach((boardDoc) => {
+        orgBoards.push({
+          id: boardDoc.id,
+          ...boardDoc.data()
+        })
+      })
+
       orgList.push({
-        id: doc.id,
-        ...doc.data(),
+        id: orgDoc.id,
+        ...orgDoc.data(),
+        boardList: orgBoards
       });
-    });
+    };
 
     return orgList ? orgList : [];
   },

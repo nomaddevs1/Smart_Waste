@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Heading, Stack, StackDivider, Card, CardHeader, Button } from "@chakra-ui/react";
+import { Box, Heading, Stack, StackDivider, Card, CardHeader, Button, useToast } from "@chakra-ui/react";
 import FirestoreService from "../db/db";
 import { useAuth } from "../context/UserAuthContext";
 
 const AllBoards = () => {
   const [orgs, setOrgs] = useState<any>([]);
+  const [clientAdded, setClientAdded] = useState<string>("");
   const { user } = useAuth()!;
   const roleRef = useRef("");
+  const toast = useToast();
+
 
   useEffect(() => {
     (async () => {
@@ -32,7 +35,13 @@ const AllBoards = () => {
   const buyBoard = async (boardSerial: string) => {
     try {
       await FirestoreService.assignBoardToClient(boardSerial, user!.uid);
-      console.log("Added client Id to board");
+      setClientAdded(boardSerial);
+      toast({
+        title: "Board successfuly bought",
+        description: "Client added to board",
+        status: "success",
+        isClosable: true,
+      }); 
     } catch (error) {
       console.error("Error adding client Id to board", error);
     }
@@ -47,11 +56,11 @@ const AllBoards = () => {
             <Heading fontSize="lg" color="white">{org.orgName}</Heading>
           </CardHeader>
           <Stack divider={<StackDivider />}>
-            {org.boards.map((board: any) => (
-              <Box key={board} display="flex" alignItems="center" justifyContent="space-between" p="1rem">
-                <Box>Serial Number: {board}</Box>
-                {roleRef.current === "client" && (
-                  <Button onClick={() => buyBoard(board)} colorScheme="teal" color="white" justifySelf="end">
+            {org.boardList.map((board: any) => (
+              <Box key={board.serialNumber} display="flex" alignItems="center" justifyContent="space-between" p="0 1rem">
+                <Box m="1.5rem 0">Serial Number: {board.serialNumber}</Box>
+                {(roleRef.current === "client" && board.clientId === "" && board.serialNumber !== clientAdded) && (
+                  <Button onClick={() => buyBoard(board.serialNumber)} colorScheme="teal" color="white" justifySelf="end">
                     Buy Board
                   </Button>
                 )}
