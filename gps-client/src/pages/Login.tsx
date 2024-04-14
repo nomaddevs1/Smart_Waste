@@ -31,10 +31,10 @@ const LoginPane = () => {
         height="auto" 
         borderRadius="10px" 
         boxShadow="md"
-        padding="5"
+        padding="2rem 0"
       >
         <Avatar bg="teal.500" />
-        <Heading color="teal.400">{isSignUp ? "Welcome" : "Welcome Back"}</Heading>
+        <Heading mt="2px" color="teal.400">{!isForgot ?(isSignUp ? "Welcome" : "Welcome Back"): "Forgot Password"}</Heading>
         <Box width="100%" p="0 10% 0%" mt="1rem">
           <LoginForm
             isSignUp={isSignUp}

@@ -174,8 +174,8 @@ const FirestoreService = {
   ) => {
     const user = await FirestoreService.getUser(userId);
     const que =
-      user!.role === "organization" || "collector" ? "orgId" : "clientId";
-    const id = user!.role === "organization" || "collector"? user!.orgId : userId;
+      (user!.role === "organization" || user!.role ==="collector" )? "orgId" : "clientId";
+    const id =( user!.role === "organization" || user!.role === "collector")? user!.orgId : userId;
     const boardsRef = collection(db, "boards");
     let q = query(boardsRef, where(que, "==", id));
 
@@ -291,14 +291,27 @@ const FirestoreService = {
   },
 
   getAllOrg: async (): Promise<DocumentData[] | []> => {
-    const orgList: { id: string }[] = [];
-    const querySnapshot = await getDocs(collection(db, "organizations"));
-    querySnapshot.forEach((doc) => {
+    const orgList: { id: string, boardList?: any }[] = [];
+    const orgSnap = await getDocs(collection(db, "organizations"));
+    for (const orgDoc of orgSnap.docs) {
+      const orgBoards: any = [];
+
+      const boardSnap = collection(db, 'boards');
+      const boardQuery = query(boardSnap, where('orgId', '==', orgDoc.id));
+      const boardRef = await getDocs(boardQuery);
+      boardRef.forEach((boardDoc) => {
+        orgBoards.push({
+          id: boardDoc.id,
+          ...boardDoc.data()
+        })
+      })
+
       orgList.push({
-        id: doc.id,
-        ...doc.data(),
+        id: orgDoc.id,
+        ...orgDoc.data(),
+        boardList: orgBoards
       });
-    });
+    };
 
     return orgList ? orgList : [];
   },
@@ -348,6 +361,20 @@ const FirestoreService = {
       }
     } catch (e: any) {
       throw new Error(e.message);
+    }
+  },
+
+  getBoardClientId: async (serialNumber: string): Promise<string | null> => {
+    try {
+      const boardRef = doc(db, "boards", serialNumber);
+      const docSnap = await getDoc(boardRef);
+      if (docSnap.exists()) {
+        return docSnap.data().clientId;
+      } else {
+        return null;
+      }
+    } catch (error: any) {
+      throw new Error("Error getting board client id", error.message);
     }
   },
 };

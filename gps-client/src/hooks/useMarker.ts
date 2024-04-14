@@ -5,6 +5,7 @@ import bin_empty from '../assets/bin_empty.svg';
 import bin_full from '../assets/bin_full.svg';
 import { useAuth } from "../context/UserAuthContext";
 import FirestoreService from "../db/db";
+import { useState } from 'react';
 import "../styles/marker.css";
 
 interface useMarkerProps {
@@ -15,6 +16,8 @@ interface useMarkerProps {
     boardName: string,
     boardLocation: string,
   ) => void;
+  originStr: string;
+  destinationStr: string;
 }
 
 export const useMarker = (role: string): useMarkerProps => {
@@ -22,6 +25,8 @@ export const useMarker = (role: string): useMarkerProps => {
   const { userLocation } = useGeolocation();
   const { calculateRoute } = useDirections();
   const { isAuthenticated} = useAuth()!;
+  const [originStr, setOriginStr] = useState<string>("");
+  const [destinationStr, setDestinationStr] = useState<string>("");
 
   const toggleHighlight = (marker: google.maps.marker.AdvancedMarkerElement) => {
     if(marker.content){
@@ -65,6 +70,8 @@ export const useMarker = (role: string): useMarkerProps => {
     const getRoute = () => {
       if (userLocation){
         calculateRoute(userLocation, markerPosition);
+        setOriginStr(`${userLocation.lat},${userLocation.lng}`);
+        setDestinationStr(`${markerPosition.lat},${markerPosition.lng}`);
       } else {
         alert ("User location not found, please enable location services");
       }
@@ -125,5 +132,5 @@ export const useMarker = (role: string): useMarkerProps => {
     }
   }
 
-  return { createMarker }
+  return { createMarker, originStr, destinationStr }
 }
