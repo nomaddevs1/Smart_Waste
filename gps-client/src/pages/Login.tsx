@@ -20,6 +20,11 @@ const LoginPane = () => {
     }
   }, [user, navigate, isFirstTime, isLoading]);
 
+  const toggle = () =>{
+    setIsSignUp(!isSignUp)
+    setForgot(false)
+  }
+
   return (
     <Flex width="100wh" height="100vh" alignItems="center" justifyContent="center">
       <Flex 
@@ -46,7 +51,7 @@ const LoginPane = () => {
           />
           <Box display="flex" flexDirection="column" alignItems="center">
             <SignInWithGoogleButton signInWithGoogle={signInWithGoogle} />
-            <AuthToggleLink isSignUp={isSignUp} toggleSignUp={() => setIsSignUp(!isSignUp)} />
+            <AuthToggleLink isSignUp={isSignUp} toggleSignUp={() => toggle()} />
           </Box>
         </Box>
       </Flex>

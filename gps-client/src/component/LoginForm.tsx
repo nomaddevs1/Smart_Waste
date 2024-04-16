@@ -65,7 +65,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ isSignUp,isForgot, onSignI
       await onSignIn(email, password);}
     }
   };
-
+ 
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={4} p="1rem" mb="20px"alignItems="center" gap="30px">
