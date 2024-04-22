@@ -51,7 +51,6 @@ function Map() {
           flexDirection="column" 
           alignItems="center" 
           overflow="auto"
-          justifyContent="space-between"
         >
           <Link isExternal href={`https://google.com/maps/dir/?api=1&origin=${originStr}&destination=${destinationStr}`} width="100%" mt={{md: "10px"}}>
             <Button width="100%" colorScheme="teal">Open Google Maps</Button>
