@@ -1,4 +1,4 @@
-# Transcribe Client
+# Smart Waste Client
 
 ## Table of Contents
 
@@ -9,15 +9,15 @@
 
 ## Introduction<a name="introduction"></a>
 
-Our client is developed using React and scaffolded with `create-react-app`. It provides the user interface for interacting with the transcription service, allowing users to upload audio files, view and edit transcriptions, and export the results.
+Our client is developed using React and scaffolded with `create-react-app`. It provides the user interface for interacting with the Smart Waste management system, allowing users to monitor and manage waste collection services efficiently.
 
 ## Installation<a name="installation"></a>
 
 To set up the client for development or deployment, follow these steps:
 
-1. Navigate to the `transcribe-client/` directory:
+1. Navigate to the `gps-client/` directory:
     ```sh
-    cd transcribe-client/
+    cd gps-client/
     ```
     
 2. Install the project dependencies:
@@ -27,14 +27,7 @@ To set up the client for development or deployment, follow these steps:
 
 ## Usage<a name="usage"></a>
 
-For development purposes, you can run the client in two modes:
-
-- **Development Mode with Mock Backend**:
-    ```sh
-    npm run dev
-    ```
-    This mode runs the client with mock backend interactions, suitable for UI development without requiring the actual backend.
-
+For development purposes, you can run the client in:
 - **Standard Development Mode**:
     ```sh
     npm start
@@ -44,46 +37,39 @@ For development purposes, you can run the client in two modes:
 ## Folder Structure<a name="folder-structure"></a>
 
 The client project is organized as follows:
+# GPS Client Project Structure Overview
 
+This document outlines the primary directories and their functions within the GPS Client application.
 
+## Key Directories and Their Functions
 
-```
-src/
-├── assets/ # Static assets like images and logos
-├── components/ # Reusable components
-│ ├── sidebar/ # Sidebar-specific components
-│ └── uploads/ # Components related to file upload functionality
-├── context/ # React context providers
-├── hooks/ # Custom React hooks
-├── pages/ # Page components
-├── theme/ # Theme configurations and overrides
-│ ├── components/ # Theme overrides for specific components
-│ └── foundations/ # Theme foundations like colors, fonts, etc.
-├── types/ # TypeScript types and interfaces
-├── utils/ # Utility functions
-├── App.tsx # Main application component
-└── index.tsx # Entry point for the React application
-```
+- **`public/`**: Contains static assets that are publicly accessible, including the entry HTML file, favicon, logos, manifest, and robots.txt.
 
+- **`src/`**: Main source directory for the application's codebase:
+  - **`assets/`**: Stores static images like icons and user avatars.
+  - **`auth/`**: Manages user authentication configurations, including Firebase.
+  - **`component/`**: Reusable React components such as buttons, forms, and headers.
+  - **`context/`**: React contexts for global state management.
+  - **`db/`**: Scripts for database interactions.
+  - **`hooks/`**: Custom React hooks for sharing logic and state.
+  - **`pages/`**: Components representing different views or routes like Dashboard and Login.
+  - **`styles/`**: CSS for specific components.
+  - **`types/`**: TypeScript definitions and interfaces for type safety.
 
-- **components/**: Contains UI components that are reused across various parts of the application.
-- **context/**: Houses React context providers for global state management.
-- **hooks/**: Custom React hooks for encapsulating reusable logic.
-- **pages/**: Components representing entire pages within the application.
-- **theme/**: Theme settings for styling the application, including Chakra UI customizations.
-- **types/**: TypeScript definitions and interfaces used throughout the application.
-- **utils/**: Utility functions for tasks like formatting or data manipulation.
+- **`README.md`**: Documentation for the project, providing setup and usage instructions.
 
-This structure is designed to facilitate easy navigation and maintenance of the codebase, promoting reusability and modularity.
+- **`package.json`** & **`package-lock.json`**: Define NPM dependencies and scripts.
 
-- **assets/**: Contains images and icons used throughout the client application.
-- **auth/**: Handles authentication, including integration with Firebase.
-- **component/**: Various UI components that construct the visual interface.
-- **context/**: React contexts for managing global application state.
-- **hooks/**: Custom React hooks for encapsulating business logic.
-- **pages/**: Individual pages within the application, each representing a different view or functionality.
-- **styles/**: CSS files for custom styling of map markers.
-- **types/**: TypeScript types and interfaces for ensuring type safety across the application.
-- **db/**: Database interactions, particularly for managing data storage and retrieval.
+- **`tsconfig.json`**: TypeScript compiler configuration file.
 
-This structure is designed to facilitate easy navigation and maintenance of the codebase, promoting reusability and modularity.
+## Files Description
+
+Each file and directory has a specific role:
+
+- **`public/index.html`**: The main HTML document that serves as the entry point for the application.
+- **`src/index.tsx`**: Bootstrap and entry file for the React application.
+- **`src/App.tsx`**: Root component that houses the basic structure and routing of the app.
+
+## Summary
+
+This structure ensures the GPS Client application is organized and modular, making development and maintenance efficient and scalable.
