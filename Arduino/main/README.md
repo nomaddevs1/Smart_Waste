@@ -57,10 +57,6 @@ We welcome contributions from the community. Please read the CONTRIBUTING.md for
 ### License
 Distributed under the MIT License. See LICENSE for more information.
 
-### Contact
-Farouq Siwoku – farouqsiwoku@gmail.com
-Nick Igenito - ningenito@gmail.com
-
 Project Link: https://github.com/your-github-repository/nomaddevs/Smart-Waste
 
 
