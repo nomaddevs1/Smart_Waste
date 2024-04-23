@@ -77,7 +77,7 @@ const WifiSetupModal: React.FC<WifiSetupModalProps> = ({
           isClosable: true,
       })
     }
-    // getAddress(serialNumber!, lat, lng);
+    getAddress(serialNumber!, lat, lng);
   };
   return (
     <Modal
