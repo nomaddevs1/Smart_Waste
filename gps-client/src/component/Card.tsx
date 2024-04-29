@@ -60,7 +60,7 @@ const Cards = () => {
       {boards.map((board, i) => (
         <Card maxW="sm" key={i} margin={5} borderRadius="10px" boxShadow="lg">
           <Box bg="blue.900" width="100%" height="30px" borderTopRadius="10px" boxShadow="Base"/>
-          <CardBody width="400px">
+          <CardBody width="90%">
             <Stack spacing="3">
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 {changingName === board.serialNumber ? (
