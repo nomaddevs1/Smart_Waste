@@ -58,9 +58,9 @@ const Cards = () => {
       margin={2}
     >
       {boards.map((board, i) => (
-        <Card maxW="sm" key={i} margin={5} borderRadius="10px" boxShadow="lg">
+        <Card key={i} margin={5} borderRadius="10px" boxShadow="lg">
           <Box bg="blue.900" width="100%" height="30px" borderTopRadius="10px" boxShadow="Base"/>
-          <CardBody width="90%">
+          <CardBody width={{base: "85vw", md: "400px"}}>
             <Stack spacing="3">
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 {changingName === board.serialNumber ? (
@@ -79,15 +79,14 @@ const Cards = () => {
                 <Button justifySelf="end" variant="link" onClick={() => toggleNameChange(board.serialNumber)}><PencilSimpleLine/></Button>
               </Box>
               <Text textOverflow="auto">Location: {board.location}</Text>
-              <Box display="flex" alignItems="center">
-                <Text>Bin Status:</Text>
-                <Text ml="4px" color={board.status === "full" ? 'red.600' : 'green.600'}>{board.status}</Text>
-              </Box>
             </Stack>
           </CardBody>
           <Divider />
           <CardFooter display="flex" alignItems="center" justifyContent="space-between">
-            <Text>{board.serialNumber}</Text>
+            <Box display="flex" alignItems="center">
+              <Text>Bin Status:</Text>
+              <Text ml="4px" color={board.status === "full" ? 'red.600' : 'green.600'}>{board.status}</Text>
+            </Box>
             <Button justifySelf="end" colorScheme="teal" onClick={() => updateStatus(board.serialNumber)}>Reset Status</Button>
           </CardFooter>
         </Card>
